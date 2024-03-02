@@ -1,0 +1,1 @@
+home/static/home.jpg
