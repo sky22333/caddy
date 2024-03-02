@@ -10,7 +10,7 @@
 
 纯静态前端页面
 
-小白教程：只需安装nginx然后把下载的源码解压放入网站根目录即可
+小白教程：只需安装nginx然后把下载的[源码](https://github.com/taotao1058/home/releases)解压放入网站根目录即可
 
 
 
