@@ -12,7 +12,39 @@
 
 小白教程：只需安装nginx然后把下载的[源码](https://github.com/taotao1058/home/releases)解压放入网站根目录即可
 
+# caddy配置教程：
 
+安装：
+```
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo tee /etc/apt/trusted.gpg.d/caddy-stable.asc
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update
+sudo apt install caddy
+```
+
+配置文件：
+
+路径
+`/etc/caddy/Caddyfile`
+
+内容
+
+```
+yourdomain.com {
+    root * /var/www/yourdomain
+    file_server
+    encode gzip
+}
+
+http://yourdomain.com {
+    redir https://yourdomain.com{uri}
+}
+```
+
+启动：
+```
+sudo systemctl restart caddy
+```
 
 
 
