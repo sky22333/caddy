@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二次元发布页</title>
+    <style>
+        body {
+            background-image: url('https://i1.wp.com/img.erpweb.eu.org/imgs/2024/03/b31b79e7d7a6757e.jpg');
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .announcement {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(185, 156, 217, 0.3);
+            padding: 10px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            color: #E6E6FA;
+            font-size: 1.2em;
+        }
+        .video-title {
+            font-family: 'Arial', sans-serif;
+            color: #E6E6FA;
+            font-size: 2em;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 90%;
+            margin-top: 20px;
+        }
+        .button {
+            background: rgba(255, 255, 255, 0.4);
+            border: 2px solid black;
+            backdrop-filter: blur(5px);
+            width: 45%;
+            margin: 10px;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: black;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .button:hover {
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .button-title {
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+        .button-description {
+            font-size: 1em;
+        }
+        .footer {
+            font-size: 0.8em;
+            color: #E6E6FA;
+            text-align: center;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .video-title {
+                margin-top: 50px; /* Increase top margin to prevent overlap */
+            }
+            .button {
+                width: 80%; /* Smaller buttons on mobile */
+                margin: 5px 0;
+                padding: 10px 0;
+            }
+            .button-title, .button-description {
+                font-size: 0.9em; /* Smaller text in buttons on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="announcement">
+        <marquee behavior="scroll" direction="left" scrollamount="5">强烈建议Ctrl+D收藏本站点 防止失联。</marquee>
+    </div>
+    <h1 class="video-title">二次元网站发布页</h1>
+    <div class="buttons-container">
+        <a href="https://example.com/link1" class="button" target="_blank">
+            <div class="button-title">主站点</div>
+            <div class="button-description">点击跳转：example.comm</div>
+        </a>
+        <a href="https://example.com/link2" class="button" target="_blank">
+            <div class="button-title">备用一</div>
+            <div class="button-description">点击跳转：1example.com</div>
+        </a>
+        <a href="https://example.com/link3" class="button" target="_blank">
+            <div class="button-title">备用二</div>
+            <div class="button-description">点击跳转：2example.com</div>
+        </a>
+        <a href="https://example.com/link4" class="button" target="_blank">
+            <div class="button-title">备用三</div>
+            <div class="button-description">点击跳转：3example.com</div>
+        </a>
+        <a href="https://example.com/link5" class="button" target="_blank">
+            <div class="button-title">备用四</div>
+            <div class="button-description">点击跳转：4example.com</div>
+        </a>
+        <a href="https://example.com/link6" class="button" target="_blank">
+            <div class="button-title">备用五</div>
+            <div class="button-description">点击跳转：5example.com</div>
+        </a>
+    </div>
+    <div class="footer">
+        © 2024 二次元. All rights reserved.
+    </div>
+</body>
+</html>
