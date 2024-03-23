@@ -14,7 +14,7 @@
 
 # caddy配置教程：
 
-安装：
+#### 安装：
 ```
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo tee /etc/apt/trusted.gpg.d/caddy-stable.asc
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
@@ -22,10 +22,9 @@ sudo apt update
 sudo apt install caddy
 ```
 
-配置文件：
+#### 配置文件：
 
-路径
-`/etc/caddy/Caddyfile`
+路径`/etc/caddy/Caddyfile`
 
 内容
 
@@ -41,7 +40,7 @@ http://yourdomain.com {
 }
 ```
 
-启动：
+#### 启动：
 ```
 sudo systemctl restart caddy
 ```
