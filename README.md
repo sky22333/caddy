@@ -54,7 +54,23 @@ http://yourdomain.com {
 sudo systemctl restart caddy
 ```
 
+#### 多个端口反代配置
+```
+:2015 {
+    root * /var/www/home1
+    file_server
+}
 
+:2016 {
+    root * /var/www/home2
+    file_server
+}
+
+:2017 {
+    root * /var/www/home3
+    file_server
+}
+```
 
 
 
