@@ -74,6 +74,12 @@ sudo systemctl restart caddy
     encode gzip
 }
 ```
+#### 反代配置
+```
+yourdomain.com {
+    reverse_proxy localhost:8333
+}
+```
 
 
 
