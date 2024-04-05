@@ -7,6 +7,11 @@
 
 # caddy配置教程：
 
+#### Docker
+```
+docker run -d --name caddy -v /etc/caddy/Caddyfile:/etc/caddy/Caddyfile -v /var/wwww/home:/srv -p 80:80 -p 443:443 caddy
+```
+
 #### 安装：
 ```
 sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
