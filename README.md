@@ -91,7 +91,7 @@ yourdomain.com {
     reverse_proxy /admin/* localhost:1234
 }
 ```
-
+`面板需监听本地`
 
 ### 2：效果演示
 
