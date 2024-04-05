@@ -87,7 +87,7 @@ yourdomain.com {
     # 当访问根域名时，重定向到Bing
     redir / https://www.bing.com{uri}
 
-    # 当访问特定路径（例如 /admin）时，转发到面板
+    # 当访问特定路径（例如 /admin）时，转发到特定服务
     reverse_proxy /admin/* localhost:1234
 }
 ```
