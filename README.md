@@ -93,10 +93,6 @@ yourdomain.com {
 ```
 `面板需监听本地`
 
-### 2：效果演示
-
- ![alt](/static/home.jpg)
 
 ---
 
-#### 声明：我只是个搬运工，原作者[在这里](https://github.com/ZYYO666)
