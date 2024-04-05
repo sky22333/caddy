@@ -91,25 +91,7 @@ yourdomain.com {
     reverse_proxy /admin/* localhost:1234
 }
 ```
-#### xray端口复用
-```
-yourdomain.com {
-    # 当访问根域名时，重定向到 Bing
-    redir / https://www.bing.com{uri}
 
-    # 当访问 /admin/* 路径时，转发到面板
-    reverse_proxy /admin/* localhost:1234
-
-    # 当访问 /vmess/* 路径时，流量通过 xray 的 vmess+ws 节点
-    reverse_proxy /vmess/* localhost:12345 {
-        # WebSocket
-        header_up Upgrade {http.request.header.Upgrade}
-        header_up Connection {http.request.header.Connection}
-    }
-}
-```
-
-`客户端节点端口需改为443`
 
 ### 2：效果演示
 
