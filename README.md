@@ -68,26 +68,6 @@ http://yourdomain.com {
 ```
 
 
-#### 多个端口反代多个站点
-```
-:2015 {
-    root * /var/www/home1
-    file_server
-    encode gzip
-}
-
-:2016 {
-    root * /var/www/home2
-    file_server
-    encode gzip
-}
-
-:2017 {
-    root * /var/www/home3
-    file_server
-    encode gzip
-}
-```
 #### 反代配置
 ```
 yourdomain.com {
