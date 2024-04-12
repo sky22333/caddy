@@ -29,6 +29,21 @@ sudo apt update
 sudo apt install caddy
 ```
 
+#### 启动：
+```
+sudo systemctl restart caddy
+```
+
+#### 停止
+```
+sudo systemctl stop caddy
+```
+
+#### 卸载
+```
+sudo apt-get purge --auto-remove caddy
+```
+
 #### 配置文件：
 
 路径`/etc/caddy/Caddyfile`
@@ -47,10 +62,6 @@ http://yourdomain.com {
 }
 ```
 
-#### 启动：
-```
-sudo systemctl restart caddy
-```
 
 #### 多个端口反代多个站点
 ```
