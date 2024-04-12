@@ -34,12 +34,17 @@ sudo apt install caddy
 sudo systemctl restart caddy
 ```
 
-#### 停止
+#### 运行状态
+```
+systemctl status caddy
+```
+
+#### 停止服务
 ```
 sudo systemctl stop caddy
 ```
 
-#### 卸载
+#### 完全卸载
 ```
 sudo apt-get purge --auto-remove caddy
 ```
