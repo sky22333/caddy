@@ -58,13 +58,9 @@ sudo apt-get purge --auto-remove caddy
 
 ```
 yourdomain.com {
-    root * /var/www/yourdomain
+    root * /var/www/web
     file_server
     encode gzip
-}
-
-http://yourdomain.com {
-    redir https://yourdomain.com{uri}
 }
 ```
 
