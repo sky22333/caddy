@@ -78,7 +78,10 @@ yourdomain.com {
     header @cache Cache-Control "public, max-age=31536000, immutable"
 }
 ```
-
+#### 证书路径
+```
+/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory
+```
 
 #### 反代配置
 ```
