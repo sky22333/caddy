@@ -1,0 +1,524 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="星空云"/>
+    <meta name="description" content="星空云">
+    <meta name="author" content="星空云">
+    <meta name="Copyright" content="星空云版权所有">
+    <meta property="og:title" content="星空云" />
+    <meta property="og:description" content="星空云">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.星空云.com" />
+    <meta property="og:site_name" content="星空云">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>星空云</title>
+    <link rel="apple-touch-icon" href="favicon.ico" />
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NBQZ3Z9R');</script>
+    <!-- End Google Tag Manager -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7B4CZPTMMH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-7B4CZPTMMH');
+    </script>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "微软雅黑";
+            font-size: 16px;
+            line-height: 1.8;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        a{
+            text-decoration:none;
+            color:#333;
+        }
+        .nav{
+            position: fixed;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            z-index: 999;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+        .nav .logo{
+            width: 760px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+        }
+        .logo img{
+            height: 100%;
+        }
+        .logo p{
+            line-height: 100px;
+            font-size: 45px;
+            font-weight: bold;
+            background-image: linear-gradient(to right, #ad2cee, #2656f3);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .warp{
+            padding-bottom: 100px;
+            margin-top: 100px;
+            width: 1024px;
+        }
+        .warp .gw-box{
+            border-radius: 20px;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 20px 0;
+            margin-top: 30px;
+        }
+        .warp .gw-box h3{
+            display: flex;
+            justify-content: center;
+            height: 40px;
+            line-height: 40px;
+            font-size: 24px;
+            color: rgba(55, 84, 234, 0.80);
+        }
+        .warp .guanwang{
+            display: flex;
+            margin-top: 20px;
+            /*width: 300px;*/
+            justify-content: space-around;
+            align-items: center;
+        }
+        .warp .guanwang h2{
+            height: 70px;
+            line-height: 70px;
+            flex: 1;
+            margin: 0 15px 0 15px;
+            display: flex;
+            justify-content: center;
+            border-radius: 20px;
+            background: rgba(55, 84, 234, 0.75);
+
+        }
+        .warp .guanwang h2 a{
+            color: #ffffff;
+            font-size: 24px;
+        }
+        .warp .wangzhan{
+            display: flex;
+            margin-top: 20px;
+            /*width: 300px;*/
+            justify-content: space-around;
+            align-items: center;
+        }
+        .warp .gw-box .h3-wangzhan{
+            color: rgba(106, 69, 231, 0.8);
+        }
+        .wangzhan .login {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: rgb(255, 255, 255);
+            font-weight: bold;
+            border-radius: 20px;
+            background: rgba(106, 69, 231, 0.1);
+        }
+        .wangzhan .login i{
+            margin-top: 5px;
+            height: 40px;
+        }
+        .wangzhan .login img{
+            width: 40px;
+        }
+        .wangzhan .login p {
+            font-size: 24px;
+            color: rgb(245, 132, 12);
+        }
+        .wangzhan .login p span {
+            font-size: 16px;
+        }
+        .wangzhan .login span{
+            font-size: 16px;
+            color: rgb(245, 132, 12);
+        }
+        .wangzhan .login div{
+            height: 40px;
+            width: 130px;
+            line-height: 40px;
+            margin: 10px 0 15px 0;
+            color: #6d327c;
+            text-align: center;
+            border-radius: 20px;
+            background: rgba(106, 69, 231, 0.7);
+        }
+        .wangzhan .login a {
+            color: #ffffff;
+            font-size: 16px;
+        }
+        .warp .gw-box .h3-tg{
+            color: rgba(158, 38, 241, 0.7);
+        }
+        .warp .gw-box .tg{
+            display: flex;
+            margin-top: 20px;
+            /*width: 300px;*/
+            justify-content: space-around;
+            align-items: center;
+        }
+        .warp .gw-box .tg h2{
+            height: 70px;
+            line-height: 70px;
+            flex: 1;
+            margin: 0 15px 0 15px;
+            display: flex;
+            justify-content: center;
+            border-radius: 20px;
+            background: rgba(158, 38, 241, 0.8);
+            box-shadow: 10px 10px 50px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .warp .tg h2 a{
+            color: #ffffff;
+            font-size: 24px;
+        }
+        .warp .tg h2 i{
+            padding-top: 8px;
+            padding-right: 5px;
+        }
+        .warp .gw-box .h3-app{
+            color: rgba(183, 81, 253, 0.7);
+        }
+        .warp .gw-box .app{
+            display: flex;
+            margin-top: 20px;
+            /*width: 300px;*/
+            justify-content: space-around;
+            align-items: center;
+        }
+        .warp .gw-box .app h2{
+            height: 70px;
+            line-height: 70px;
+            margin: 0 15px 0 15px;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            border-radius: 20px;
+            background: rgba(183, 81, 253, 0.7);
+            box-shadow: 10px 10px 50px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background-image: linear-gradient(to right, rgba(255, 7, 244, 0.62), #d440ff, rgba(164, 85, 255, 0.69), rgba(109, 97, 255, 0.69), #0768fa);
+        }
+        .warp .app h2 i{
+            position: relative;
+            margin-top: 5px;
+            margin-right: 5px;
+        }
+        .warp .app h2 a{
+            color: #ffffff;
+            font-size: 20px;
+        }
+        .bg{
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            background: linear-gradient(135deg, rgba(221, 240, 250, 0.7) 50%, rgba(208, 222, 167, 0.7));
+        }
+        .y1{
+            position: fixed;
+            width: 175px;
+            height: 175px;
+            border-radius: 50%;
+            top: 20%;
+            left: 20%;
+            background: linear-gradient(135deg, #ffb566, #ff6677);
+            z-index: -2;
+            animation: y1 10s infinite;
+            animation-direction: alternate;
+        }
+        @keyframes y1 {
+            0%{
+                top: 70%;
+                left: 20%;
+            }
+            100%{
+                top: 5%;
+                left: 15%;
+            }
+        }
+        .y2{
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            top: 45%;
+            left: 70%;
+            background: linear-gradient(135deg, #de82ca, #259fac);
+            z-index: -2;
+            animation: y2 8s infinite;
+            animation-direction: alternate;
+        }
+        @keyframes y2 {
+            0%{
+                top: 5%;
+                left: 70%;
+            }
+            100%{
+
+                top: 80%;
+                left: 40%;
+            }
+        }
+        @media screen and (max-width:767px) {
+            .warp{
+                width: 95%;
+                margin-top: 70px;
+            }
+            .nav {
+                height: 70px;
+            }
+            .logo p {
+                font-size: 25px;
+                line-height: 70px;
+            }
+            .nav .logo {
+                height: 70px;
+            }
+            .warp .gw-box h3 {
+                font-size: 18px;
+                line-height: 18px;
+                height: 18px;
+            }
+            .warp .gw-box {
+                margin-top: 20px;
+            }
+            .warp .guanwang {
+                margin-top: 16px;
+            }
+            .warp .guanwang h2{
+                height: 50px;
+                line-height: 50px;
+            }
+            .warp .guanwang h2 a{
+                font-size: 16px;
+            }
+            .warp .wangzhan {
+                margin-top: 16px;
+            }
+            .wangzhan .login {
+
+            }
+            .wangzhan .login i {
+                height: 30px;
+            }
+            .wangzhan .login img {
+                height: 30px;
+                width: 30px;
+            }
+            .wangzhan .login p {
+                font-size: 18px;
+            }
+            .wangzhan .login p span {
+                font-size: 12px;
+            }
+            .wangzhan .login span {
+                font-size: 14px;
+            }
+            .wangzhan .login div {
+                width: 95px;
+                height: 35px;
+                line-height: 35px;
+            }
+            .wangzhan .login a {
+                font-size: 14px;
+            }
+            .warp .gw-box .tg {
+                margin-top: 16px;
+            }
+            .warp .gw-box .tg h2 {
+                height: 50px;
+                line-height: 50px;
+            }
+            .warp .tg h2 a {
+                font-size: 14px;
+            }
+            .warp .tg h2 svg {
+                width: 24px;
+            }
+            .warp .gw-box .app {
+                margin-top: 16px;
+                flex-direction: column;
+                align-items: center;
+            }
+            .warp .gw-box .app h2 {
+                height: 50px;
+                line-height: 50px;
+                width: 95%;
+                margin: 0 0 15px 0;
+                background-image: linear-gradient(to right, #ff07f4, #d440ff, #a455ff, #6d61ff, #0768fa);
+                backdrop-filter: blur(15px);
+                -webkit-backdrop-filter: blur(15px);
+            }
+            .warp .app h2 a {
+                font-size: 16px;
+                line-height: 50px;
+            }
+            .warp .app h2 i{
+                position: relative;
+                margin-top: 7px;
+                margin-right: 5px;
+            }
+            .warp {
+                padding-bottom: 30px;
+            }
+            .y1 {
+                top: 17%;
+                left: 4%;
+                background-image: linear-gradient(135deg, rgba(255, 181, 102, 0.7), rgba(255, 102, 119, 0.6));
+            }
+            .y2 {
+                top: 45%;
+                left: 52%;
+                background-image: linear-gradient(148deg, rgba(222, 130, 202, 0.67), rgba(37, 159, 172, 0.64));
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NBQZ3Z9R"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div class="nav">
+    <div class="logo">
+        <img src="logo.png" alt="星空云logo">
+        <p>星空云</p>
+    </div>
+</div>
+
+<div class="warp">
+
+    <div class="gw-box">
+        <h3> 谨防失联，牢记域名</h3>
+        <div class="guanwang">
+            <h2><a href="https://www.星空云.com">星空云.com</a></h2>
+            <h2><a href="https://www.星空云.me">星空云.me</a></h2>
+        </div>
+    </div>
+
+    <div class="gw-box">
+        <h3 class="h3-wangzhan">星空云登录</h3>
+        <div class="wangzhan">
+            <div class="login">
+                <i><img src="data:image/png;base64,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"></i>
+                <p id="w1">测速中...</p>
+                <span>NO.1高速线路</span>
+                <div><a href="" target="_blank">点击进入</a></div>
+            </div>
+            <div class="login">
+                <i><img src="data:image/png;base64,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"></i>
+                <p id="w2">测速中...</p>
+                <span>NO.2高速线路</span>
+                <div><a href="" target="_blank">点击进入</a></div>
+            </div>
+            <div class="login">
+                <i><img src="data:image/png;base64,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"></i>
+                <p id="w3">测速中...</p>
+                <span>NO.3高速线路</span>
+                <div><a href="" target="_blank">点击进入</a></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="gw-box">
+        <h3 class="h3-tg">星空云官方Telegram</h3>
+        <div class="tg">
+            <h2>
+                <i><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="35" viewBox="0,0,256,256">
+                    <g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(5.12,5.12)"><path d="M25,2c12.703,0 23,10.297 23,23c0,12.703 -10.297,23 -23,23c-12.703,0 -23,-10.297 -23,-23c0,-12.703 10.297,-23 23,-23zM32.934,34.375c0.423,-1.298 2.405,-14.234 2.65,-16.783c0.074,-0.772 -0.17,-1.285 -0.648,-1.514c-0.578,-0.278 -1.434,-0.139 -2.427,0.219c-1.362,0.491 -18.774,7.884 -19.78,8.312c-0.954,0.405 -1.856,0.847 -1.856,1.487c0,0.45 0.267,0.703 1.003,0.966c0.766,0.273 2.695,0.858 3.834,1.172c1.097,0.303 2.346,0.04 3.046,-0.395c0.742,-0.461 9.305,-6.191 9.92,-6.693c0.614,-0.502 1.104,0.141 0.602,0.644c-0.502,0.502 -6.38,6.207 -7.155,6.997c-0.941,0.959 -0.273,1.953 0.358,2.351c0.721,0.454 5.906,3.932 6.687,4.49c0.781,0.558 1.573,0.811 2.298,0.811c0.725,0 1.107,-0.955 1.468,-2.064z"></path></g></g>
+                </svg></i>
+                <a href="https://t.me/" target="_blank">星空云TG官方群</a></h2>
+            <h2>
+                <i><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="35" viewBox="0,0,256,256">
+                    <g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(5.12,5.12)"><path d="M25,2c12.703,0 23,10.297 23,23c0,12.703 -10.297,23 -23,23c-12.703,0 -23,-10.297 -23,-23c0,-12.703 10.297,-23 23,-23zM32.934,34.375c0.423,-1.298 2.405,-14.234 2.65,-16.783c0.074,-0.772 -0.17,-1.285 -0.648,-1.514c-0.578,-0.278 -1.434,-0.139 -2.427,0.219c-1.362,0.491 -18.774,7.884 -19.78,8.312c-0.954,0.405 -1.856,0.847 -1.856,1.487c0,0.45 0.267,0.703 1.003,0.966c0.766,0.273 2.695,0.858 3.834,1.172c1.097,0.303 2.346,0.04 3.046,-0.395c0.742,-0.461 9.305,-6.191 9.92,-6.693c0.614,-0.502 1.104,0.141 0.602,0.644c-0.502,0.502 -6.38,6.207 -7.155,6.997c-0.941,0.959 -0.273,1.953 0.358,2.351c0.721,0.454 5.906,3.932 6.687,4.49c0.781,0.558 1.573,0.811 2.298,0.811c0.725,0 1.107,-0.955 1.468,-2.064z"></path></g></g>
+                </svg></i>
+                <a href="https://t.me/" target="_blank">星空云TG频道</a></h2>
+        </div>
+    </div>
+
+    <div class="gw-box">
+        <h3 class="h3-app">星空云</h3>
+        <div class="app">
+            <h2>
+                <i><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0,0,256,256">
+                    <g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(5.12,5.12)"><path d="M16.28125,0.03125c-0.12891,0.02344 -0.26172,0.04688 -0.375,0.125c-0.45703,0.30859 -0.55859,0.94922 -0.25,1.40625l2.15625,3.21875c-3.33203,1.76563 -5.81641,4.69922 -6.625,8.21875h27.625c-0.80859,-3.51953 -3.29297,-6.45312 -6.625,-8.21875l2.15625,-3.21875c0.30859,-0.45703 0.20703,-1.09766 -0.25,-1.40625c-0.46094,-0.30859 -1.09766,-0.17578 -1.40625,0.28125l-2.375,3.5c-1.64844,-0.60156 -3.4375,-0.9375 -5.3125,-0.9375c-1.875,0 -3.66406,0.33594 -5.3125,0.9375l-2.375,-3.5c-0.23047,-0.34375 -0.64844,-0.48047 -1.03125,-0.40625zM19.5,8c0.82813,0 1.5,0.67188 1.5,1.5c0,0.83203 -0.67187,1.5 -1.5,1.5c-0.83203,0 -1.5,-0.66797 -1.5,-1.5c0,-0.82812 0.66797,-1.5 1.5,-1.5zM30.5,8c0.83203,0 1.5,0.67188 1.5,1.5c0,0.83203 -0.66797,1.5 -1.5,1.5c-0.82812,0 -1.5,-0.66797 -1.5,-1.5c0,-0.82812 0.67188,-1.5 1.5,-1.5zM8,15c-1.65625,0 -3,1.34375 -3,3v14c0,1.65625 1.34375,3 3,3c0.35156,0 0.6875,-0.07422 1,-0.1875v-19.625c-0.3125,-0.11328 -0.64844,-0.1875 -1,-0.1875zM11,15v22c0,1.65234 1.34766,3 3,3h22c1.65234,0 3,-1.34766 3,-3v-22zM42,15c-0.35156,0 -0.6875,0.07422 -1,0.1875v19.625c0.3125,0.10938 0.64844,0.1875 1,0.1875c1.65625,0 3,-1.34375 3,-3v-14c0,-1.65625 -1.34375,-3 -3,-3zM15,42v4c0,2.20703 1.79297,4 4,4c2.20703,0 4,-1.79297 4,-4v-4zM27,42v4c0,2.20703 1.79297,4 4,4c2.20703,0 4,-1.79297 4,-4v-4z"></path></g></g>
+                </svg></i>
+                <a href="https://" target="_blank">星空云安卓客户端</a>
+            </h2>
+            <h2>
+                <i><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0,0,256,256">
+                    <g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-das星空云harray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8.53333,8.53333)"><path d="M12,16h-9v7.75l9,1.238zM12,5l-9,1.25v7.75h9zM14,4.75v9.25h13v-11zM14,16v9.25l13,1.75v-11z"></path></g></g>
+                </svg></i>
+                <a href="https://" target="_blank">星空云Win客户端</a></h2>
+            <h2>
+                <i><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0,0,256,256">
+                    <g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(5.12,5.12)"><path d="M44.52734,34.75c-1.07812,2.39453 -1.59766,3.46484 -2.98437,5.57813c-1.94141,2.95313 -4.67969,6.64063 -8.0625,6.66406c-3.01172,0.02734 -3.78906,-1.96484 -7.87891,-1.92969c-4.08594,0.01953 -4.9375,1.96875 -7.95312,1.9375c-3.38672,-0.03125 -5.97656,-3.35156 -7.91797,-6.30078c-5.42969,-8.26953 -6.00391,-17.96484 -2.64844,-23.12109c2.375,-3.65625 6.12891,-5.80469 9.65625,-5.80469c3.59375,0 5.85156,1.97266 8.82031,1.97266c2.88281,0 4.63672,-1.97656 8.79297,-1.97656c3.14063,0 6.46094,1.71094 8.83594,4.66406c-7.76562,4.25781 -6.50391,15.34766 1.33984,18.31641zM31.19531,8.46875c1.51172,-1.94141 2.66016,-4.67969 2.24219,-7.46875c-2.46484,0.16797 -5.34766,1.74219 -7.03125,3.78125c-1.52734,1.85938 -2.79297,4.61719 -2.30078,7.28516c2.69141,0.08594 5.47656,-1.51953 7.08984,-3.59766z"></path></g></g>
+                </svg></i>
+                <a href="https://" target="_blank">星空云Mac客户端</a></h2>
+        </div>
+    </div>
+
+</div>
+
+<div class="bg"></div>
+<div class="y1"></div>
+<div class="y2"></div>
+
+<script>
+    var us = ["https://m1.xn--9kqy4sc0n77ra.com/", "https://m1.xn--mes358a84na.com/", "https://m1.xn--9kqy4sc0n77ra.me/"];
+    var Ping=function(a){this.opt=a||{},this.favicon=this.opt.favicon||"/favicon.ico",this.timeout=this.opt.timeout||10000,this.logError=this.opt.logError||!1};Ping.prototype.ping=function(a,b){function c(a){i.wasSuccess=!0,e.call(i,a)}function d(a){i.wasSuccess=!1,e.call(i,a)}function e(){j&&clearTimeout(j);var a=new Date-k;if(b){if("function"==typeof b)return this.wasSuccess?(f&&g(a),b(null,a)):(i.logError&&console.error("error loading resource"),f&&h(a),b("error",a));throw new Error("Callback is not a function.")}if(f)return this.wasSuccess?g(a):h(a);throw new Error("Promise is not supported by your browser. Use callback instead.")}var f,g,h;"undefined"!=typeof Promise&&(f=new Promise(function(a,b){g=a,h=b}));var i=this;i.wasSuccess=!1,i.img=new Image,i.img.onload=c,i.img.onerror=d;var j,k=new Date;return i.timeout&&(j=setTimeout(function(){e.call(i,void 0)},i.timeout)),i.img.src=a+i.favicon+"?"+ +new Date,f},"undefined"!=typeof exports?"undefined"!=typeof module&&module.exports&&(module.exports=Ping):window.Ping=Ping;
+
+    const py = new Ping();
+    py.ping(us[0], function(err, data) {
+        if (err) { data = '-';  }
+        document.getElementById("w1").innerHTML = data +"<span>ms</span>";
+    });
+    py.ping(us[1], function(err, data) {
+        if (err) { data = '-';  }
+        document.getElementById("w2").innerHTML = data +"<span>ms</span>";
+    });
+    py.ping(us[2], function(err, data) {
+        if (err) { data = '-';  }
+        document.getElementById("w3").innerHTML = data +"<span>ms</span>";
+    });
+    var login = document.getElementsByClassName('login');
+    for (var i = 0; i < login.length; i++){
+        login[i].getElementsByTagName('a')[0].href = us[i];
+    }
+</script>
+
+</body>
+</html>
