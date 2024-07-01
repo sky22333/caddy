@@ -13,7 +13,7 @@ docker run -d --name caddy -v /etc/caddy/Caddyfile:/etc/caddy/Caddyfile -v /var/
 ```
 
 
-#### 安装：
+#### 安装步骤：
 ```
 sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
@@ -54,38 +54,16 @@ sudo apt-get purge --auto-remove caddy
 
 路径`/etc/caddy/Caddyfile`
 
-内容
 
-```
-yourdomain.com {
-    root * /var/www/web
-    file_server browse
-    encode zstd gzip
-    try_files {path} /index.html
-
-    header {
-        # 启用HSTS，提高安全性
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        Cache-Control "public, max-age=31536000"
-        X-XSS-Protection "1; mode=block"
-        X-Content-Type-Options "nosniff"
-    }
-
-    # 缓存
-    @cache {
-        path_regexp cache .*\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf|otf|ico|webp)$
-    }
-    header @cache Cache-Control "public, max-age=31536000, immutable"
-}
-```
 #### 证书路径
 ```
 /var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory
 ```
 
-#### 反代配置
+#### 普通反代
 ```
 yourdomain.com {
+    gzip
     reverse_proxy localhost:8333
 }
 ```
