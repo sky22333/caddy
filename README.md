@@ -66,7 +66,7 @@ sudo apt-get purge --auto-remove caddy
 #### 普通反代
 ```
 yourdomain.com {
-    gzip
+    encode gzip
     reverse_proxy localhost:8333
 }
 ```
