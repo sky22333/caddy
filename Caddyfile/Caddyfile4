@@ -1,6 +1,0 @@
-your-domain.com {
-    # 反代Docker Hub
-    proxy / https://registry-1.docker.io {
-        transparent
-    }
-}
