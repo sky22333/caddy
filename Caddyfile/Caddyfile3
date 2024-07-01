@@ -1,9 +1,0 @@
-你的域名 {
-    gzip
-    basicauth / 用户名 密码
-    header / Strict-Transport-Security "max-age=31536000;"
-    tls email@qq.com
-    proxy / https://www.google.com { # 反代谷歌
-        except /robots.txt
-    }
-}
