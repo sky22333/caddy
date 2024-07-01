@@ -39,7 +39,10 @@ sudo systemctl restart caddy
 ```
 systemctl status caddy
 ```
-
+### 检查配置文件
+```
+caddy validate --config /etc/caddy/Caddyfile
+```
 #### 停止服务
 ```
 sudo systemctl stop caddy
