@@ -1,20 +1,13 @@
-yourdomain.com {
-    root * /var/www/web
-    file_server browse
+example.com {
+    root * /path/static
+    file_server
     encode zstd gzip
-    try_files {path} /index.html
 
-    header {
-        # 启用HSTS，提高安全性
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        Cache-Control "public, max-age=31536000"
-        X-XSS-Protection "1; mode=block"
-        X-Content-Type-Options "nosniff"
+    @static {
+        file
+        path *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff *.woff2
     }
 
-    # 缓存
-    @cache {
-        path_regexp cache .*\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf|otf|ico|webp)$
-    }
-    header @cache Cache-Control "public, max-age=31536000, immutable"
+    header @static Cache-Control "public, max-age=31536000, immutable"
+    header Cache-Control "public, max-age=3600"
 }
