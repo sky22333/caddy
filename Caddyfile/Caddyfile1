@@ -1,13 +1,13 @@
 example.com {
     root * /path/static
-    file_server
     encode zstd gzip
 
-    @static {
-        file
-        path *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff *.woff2
-    }
+    file_server
 
+    @static {
+        path *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff *.woff2
+        file
+    }
     header @static Cache-Control "public, max-age=31536000, immutable"
     header Cache-Control "public, max-age=3600"
 }
