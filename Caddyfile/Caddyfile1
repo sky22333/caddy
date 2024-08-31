@@ -1,6 +1,5 @@
 example.com {
-    root * /path/static
+    root * /var/www
     encode zstd gzip
-
     file_server
 }
