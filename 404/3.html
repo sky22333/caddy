@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 错误页面</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 72px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .alien {
+            font-size: 100px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .alien:hover {
+            transform: scale(1.2);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating {
+            animation: float 2s ease-in-out infinite;
+        }
+        .message {
+            font-size: 24px;
+            margin-top: 20px;
+            color: #666;
+        }
+        .stars {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            box-shadow: 1979px 1949px #FFF , 905px 1215px #FFF , 1463px 961px #FFF , 533px 1981px #FFF , 1766px 1831px #FFF , 1300px 520px #FFF , 1599px 195px #FFF , 1147px 1291px #FFF , 514px 1293px #FFF , 1343px 1081px #FFF , 1851px 1381px #FFF , 100px 950px #FFF , 1910px 1388px #FFF , 1495px 185px #FFF , 1966px 137px #FFF , 68px 1458px #FFF , 1659px 1819px #FFF , 674px 1650px #FFF , 1724px 798px #FFF , 1962px 626px #FFF;
+            animation: animStar 50s linear infinite;
+        }
+        @keyframes animStar {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-2000px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="container">
+        <h1>404</h1>
+        <div class="alien" id="alien">👽</div>
+        <p class="message">抱歉！您访问的页面不存在。</p>
+    </div>
+
+    <script>
+        const alien = document.getElementById('alien');
+        let isFloating = false;
+
+        alien.addEventListener('click', () => {
+            if (isFloating) {
+                alien.classList.remove('floating');
+                alien.textContent = '👽';
+            } else {
+                alien.classList.add('floating');
+                alien.textContent = '🛸';
+            }
+            isFloating = !isFloating;
+        });
+    </script>
+</body>
+</html>
