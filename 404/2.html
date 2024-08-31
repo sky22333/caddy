@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 错误页面</title>
+    <style type="text/css" media="screen">
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Microsoft YaHei', sans-serif;
+            text-align: center;
+            overflow: hidden;
+            background: linear-gradient(120deg, #0d0d0d, #1a1a1a, #2e2e2e);
+            background-size: 300% 300%;
+            animation: aurora 12s ease infinite;
+        }
+
+        .container {
+            color: #e0e0e0;
+        }
+
+        h1 {
+            margin: 30px 0;
+            font-size: 4em;
+            line-height: 1;
+            letter-spacing: -1px;
+            color: #e0e0e0;
+        }
+
+        p {
+            margin: 10px 0;
+            font-size: 1.2em;
+            color: #b0b0b0;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #333;
+            margin: 20px 0;
+        }
+
+        .typing {
+            width: 18em;
+            height: 1.25em;
+            border-right: 10px solid transparent;
+            animation: typing 8s steps(36, end), blink-caret 1s step-end infinite;
+            font-family: Consolas, Monaco, 'Microsoft YaHei', sans-serif;
+            word-break: break-all;
+            overflow: hidden;
+            color: #e0e0e0;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 18em; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            0% { border-color: currentColor; }
+        }
+
+        @keyframes aurora {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>404</h1>
+        <p><strong>无法找到页面 :(</strong></p>
+        <p>抱歉！您访问的页面不存在。</p>
+        <hr>
+        <p class="typing">> 无法找到页面，去别的地方看看吧。</p>
+    </div>
+</body>
+</html>
