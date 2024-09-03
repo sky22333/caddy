@@ -1,0 +1,28 @@
+example.com {
+    # 设置根目录
+    root * /var/www
+    
+    # 启用 zstd 和 gzip 压缩
+    encode zstd gzip
+    
+    # 启用文件服务器
+    file_server
+    
+    # 浏览器缓存设置 (启用缓存 30 天)
+    header Cache-Control "public, max-age=2592000"
+
+    # 如果你希望缓存特定文件类型 (例如图片和 CSS)，你可以指定路径或文件类型
+    @cacheable {
+        path_regexp \.(jpg|jpeg|png|gif|css|js|woff2)$
+    }
+    header @cacheable Cache-Control "public, max-age=2592000"
+
+    # WebSocket 代理配置 (假设 WebSocket 服务在本地 8080 端口)
+    reverse_proxy /ws* 127.0.0.1:8080 {
+        transport http {
+            # 启用 WebSocket 传输
+            compression off
+            versions h2c 1.1
+        }
+    }
+}
