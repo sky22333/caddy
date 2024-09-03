@@ -1,12 +1,12 @@
 example.com {
-    # 设置基本身份验证 (用户名: user, 密码: password)
+    # 设置基本身份验证 (用户名: myuser, 密码: password)
     basicauth {
-        user $2a$14$Xdwe9rMumr6B/OfCz4gStez257ry.h0ROCEVfp4WmBLr.6C./tnzW
+        myuser $2a$14$Xdwe9rMumr6B/OfCz4gStez257ry.h0ROCEVfp4WmBLr.6C./tnzW
     }
 
     # 或者保护特定路径，比如 /admin
     basicauth /admin {
-        user $2a$14$Xdwe9rMumr6B/OfCz4gStez257ry.h0ROCEVfp4WmBLr.6C./tnzW
+        myuser $2a$14$Xdwe9rMumr6B/OfCz4gStez257ry.h0ROCEVfp4WmBLr.6C./tnzW
     }
 
 # 生成密码的 bcrypt 哈希值的命令：caddy hash-password --plaintext "you_password"
