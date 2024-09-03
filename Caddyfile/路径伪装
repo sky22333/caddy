@@ -1,4 +1,4 @@
-yourdomain.com {
+example.com {
     # 访问域名重定向到Bing
     redir / https://www.bing.com{uri}
 
