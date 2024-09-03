@@ -63,25 +63,22 @@ sudo apt-get purge --auto-remove caddy
 /var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory
 ```
 
-#### 普通反代
+#### 反向代理
 ```
-yourdomain.com {
+example.com {
     encode gzip
-    reverse_proxy localhost:8333
+    reverse_proxy localhost:8080
 }
 ```
 
-#### 面板伪装
+#### 代理站点目录
 ```
-yourdomain.com {
-    # 访问域名重定向到Bing
-    redir / https://www.bing.com{uri}
-
-    # 访问特定路径转发到面板
-    reverse_proxy /admin/* localhost:1234
+example.com {
+    root * /var/www
+    encode zstd gzip
+    file_server
 }
 ```
-`面板需监听本地`
 
 
 ---
