@@ -1,0 +1,17 @@
+example.com {
+    # 默认路径，转发到主服务器
+    route / {
+        reverse_proxy http://127.0.0.1:8080
+    }
+
+    # /api 路径，转发到 API 服务器
+    route /api/* {
+        reverse_proxy http://127.0.0.1:9000
+    }
+
+    # 其他路径处理
+    handle {
+        # 默认处理逻辑，返回404
+        respond "Not Found" 404
+    }
+}
