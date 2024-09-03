@@ -1,0 +1,121 @@
+# 绑定多个域名
+mail.example.com:1080 mail.example.lan:1080 {
+        reverse_proxy http://192.168.1.201:18080 
+}
+
+# 静态文件服务/data/www，并且example.org/admin反向代理到http://127.0.0.1:8080
+example.org {
+        root * /data/www
+        encode gzip
+        file_server
+        redir /admin  /admin/ 301
+        reverse_proxy /admin/* http://127.0.0.1:8080 {
+        header_up X-Real-IP {remote_host}
+        }
+}
+
+# 静态文件服务/data/blog，自定义404页面
+blog.example.org {
+        root * /data/blog
+        encode gzip
+        file_server
+        handle_errors {
+                @404 {
+                        expression {http.error.status_code} == 404
+                }
+                rewrite @404 404.html
+                file_server
+        }
+}
+
+# 首页反向代理127.0.0.1:8989，但重定向所有jpg后缀到另一个网站，其他请求回应404
+www.example.org {
+        reverse_proxy 127.0.0.1:8989
+        redir /*.jpg https://img.example.org/post{uri} permanent
+        respond  404
+}
+
+# 仅使用http
+http://no.example.net {
+    respond "Hello word !"
+}
+
+# 单独设置证书
+ali.example.net {
+    respond "Hello word !"
+    tls {
+         dns alidns {
+           access_key_id 4cyPa9zBaCZAGS86qxTMz
+           access_key_secret 4ypt8XM9cF3dGds5U7R7wQhWSJLoaMYCP
+        }
+    }
+}
+cf.example.net {
+    respond "Hello word !"
+    tls {
+	    dns cloudflare kKMZgemtLrEpiG5r9igPPKRN6himKVau2iFbi
+    }
+}
+dnspod.example.net {
+    respond "Hello word !"
+    tls {
+     dns dnspod 45674,643mzcxv4k9c77rqqge4wocyydsn6
+    }
+}
+
+# 手动指定外部证书，从/data/pems目录价值所有.pem文件
+sign.cf.example.net {
+    tls {
+      load /data/pems
+    }
+}
+
+# 添加header 例如HSTS
+apple.exampe.com {
+        header Strict-Transport-Security max-age=63072000
+        respond "Hello HSTS !"
+}
+
+# 综合示例，复用URL
+nas.example.com {
+
+# 访问nas.example.com/blog，提供/data/blog目录的静态文件
+        handle /blog/* {
+                file_server {
+                        root /data/
+                }
+        }
+# 重定向不带/的路径到/
+        redir /blog  /blog/ 301
+
+# 访问nas.example.com/jsonrpc，代理aria2的jsonrpc
+        handle /jsonrpc {
+                reverse_proxy http://192.168.1.123:6800 
+        }
+
+# 访问nas.example.com/plex，代理plex服务
+## 使用uri strip_prefix可以把请求中的/plex路径去掉
+        handle /plex/* {
+                uri strip_prefix /plex
+                reverse_proxy  http://127.0.0.1:32400
+        }
+# 处理plex静态引用的web目录
+        handle /web/* {
+                reverse_proxy  http://127.0.0.1:32400
+        }
+# 重定向不带/的路径到/
+          redir /plex  /plex/ 301
+
+# 处理plex静态引用的media目录
+        handle /media/* {
+                reverse_proxy  http://127.0.0.1:32400
+        }
+
+# 代理nas的web管理服务 
+        reverse_proxy * https://127.0.0.1:5001 {
+                transport http {
+                        tls
+                        tls_insecure_skip_verify
+                }
+        }
+  }
