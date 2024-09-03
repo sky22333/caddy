@@ -1,16 +1,31 @@
-### 1：介绍
 
-一个静态导航页
-
-一个静态发布页
 
 
 # caddy教程：
 
-#### Docker(可选)
+<details>
+  <summary>Docker部署</summary>
+
+`docker-compose.yaml`配置
+
 ```
-docker run -d --name caddy -v /etc/caddy/Caddyfile:/etc/caddy/Caddyfile -v /var/wwww/home:/srv -p 80:80 -p 443:443 caddy
+services:
+  caddy:
+    image: caddy:alpine
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - /var/www/home:/srv
+    restart: always
 ```
+
+
+
+    
+</details>
 
 
 #### 安装步骤：
