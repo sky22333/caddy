@@ -1,0 +1,17 @@
+example.com {
+    # 设置基本身份验证 (用户名: user, 密码: pass)
+    basicauth {
+        user JDJhJDE0JE1uWm1VRy9uQWZ2MTc2OHRLZzh0Y1V2TkxMRW16Nmx1ZVVpRk1XZ2E1TXdkRnFUdldCenZV
+    }
+
+    # 或者保护特定路径，比如 /admin
+    # basicauth /admin {
+    #     user JDJhJDE0JE1uWm1VRy9uQWZ2MTc2OHRLZzh0Y1V2TkxMRW16Nmx1ZVVpRk1XZ2E1TXdkRnFUdldCenZV
+    # }
+
+    # 启用文件服务器
+    file_server
+}
+
+
+# 命令生成密码的 bcrypt 哈希值：caddy hash-password --plaintext "your_password"
