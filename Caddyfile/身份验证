@@ -9,4 +9,4 @@ example.com {
         user $2a$14$Xdwe9rMumr6B/OfCz4gStez257ry.h0ROCEVfp4WmBLr.6C./tnzW
     }
 
-# 命令生成密码的 bcrypt 哈希值：caddy hash-password --plaintext "you_password"
+# 生成密码的 bcrypt 哈希值的命令：caddy hash-password --plaintext "you_password"
