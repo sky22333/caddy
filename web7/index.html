@@ -1,0 +1,26 @@
+// 获取访问者IP，CN跳百度，其他国家跳B站，获取不到则打印Hello World
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>
+    function getIPInfo() {
+      fetch('https://ipinfo.io/json')
+       .then(response => response.json())
+       .then(data => {
+          if (data.country === 'CN') {
+            window.location.href = 'https://www.baidu.com';
+          } else {
+            window.location.href = 'https://www.bilibili.com';
+          }
+        })
+       .catch(error => console.error('无法获取 IP 信息:', error));
+    }
+  </script>
+</head>
+
+<body onload="getIPInfo()">
+  <h1>Hello World!</h1>
+</body>
+
+</html>
