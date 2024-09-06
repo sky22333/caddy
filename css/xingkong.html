@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增强型3D太空旅行背景与闪烁星星</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            perspective: 500px;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: rotate 200s linear infinite;
+        }
+
+        .star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: drift linear infinite, twinkle 4s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        @keyframes drift {
+            from { 
+                transform: translateZ(-1500px) scale(0.1); 
+                opacity: 0;
+            }
+            to { 
+                transform: translateZ(1500px) scale(0.7); 
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .aurora-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .aurora {
+            position: absolute;
+            left: -50%;
+            top: -50%;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(0deg, transparent 0%, rgba(32, 128, 64, 0.2) 2%, rgba(32, 128, 64, 0.8) 5%, rgba(32, 128, 64, 0.1) 7%, transparent 10%),
+                linear-gradient(90deg, transparent 0%, rgba(32, 128, 64, 0.1) 2%, rgba(32, 128, 64, 0.6) 5%, rgba(32, 128, 64, 0.2) 7%, transparent 10%);
+            animation: aurora 20s linear infinite;
+        }
+
+        @keyframes aurora {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="aurora-container">
+        <div class="aurora"></div>
+    </div>
+    <script>
+        function createStars() {
+            const stars = document.querySelector('.stars');
+            for (let i = 0; i < 1000; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                const size = Math.random() * 2 + 1; // 星星大小在1-3像素之间
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                const duration = Math.random() * 50 + 50;
+                star.style.animationDuration = `${duration}s, 4s`; // drift和twinkle的持续时间
+                star.style.animationDelay = `${Math.random() * duration - duration}s, ${Math.random() * 4}s`; // drift和twinkle的延迟
+                stars.appendChild(star);
+            }
+        }
+
+        createStars();
+    </script>
+</body>
+</html>
