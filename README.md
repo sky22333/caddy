@@ -84,13 +84,15 @@ sudo apt install -yq debian-keyring debian-archive-keyring apt-transport-https c
 | 命令或路径                                          | 说明                         |
 |-----------------------------------------------------|------------------------------|
 | `sudo systemctl restart caddy`                      | 启动或重启 Caddy                   |
-| `systemctl status caddy`                            | 查看 Caddy 运行状态           |
-| `journalctl -u caddy`                              | 查看 Caddy 日志           |
+| `sudo systemctl status caddy`                            | 查看 Caddy 运行状态           |
+| `sudo journalctl -u caddy`                              | 查看 Caddy 日志           |
 | `caddy validate --config /etc/caddy/Caddyfile`      | 检查 Caddy 配置文件           |
 | `sudo systemctl stop caddy`                         | 停止 Caddy 服务               |
 | `sudo apt-get purge --auto-remove caddy`            | 完全卸载 Caddy                |
 | `/etc/caddy/Caddyfile`                              | Caddy 配置文件路径            |
-| `/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory` | Caddy 证书存储路径            |
+
+
+Caddy 证书存储路径  `/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory`
 
 
 #### 反向代理
