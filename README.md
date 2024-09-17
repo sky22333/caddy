@@ -51,8 +51,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /etc/caddy/Caddyfile:/etc/caddy/Caddyfile
-      - /var/www/home:/srv
+      - /etc/caddy/Caddyfile:/etc/caddy/Caddyfile    # 映射配置文件
+      - /var/www/home:/srv                           # 映射站点目录
     restart: always
 ```
     
