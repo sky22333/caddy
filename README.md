@@ -95,7 +95,7 @@ sudo apt install -yq debian-keyring debian-archive-keyring apt-transport-https c
 Caddy 证书存储路径  `/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory`
 
 
-#### 反向代理
+#### 反向代理示例
 ```
 example.com {
     encode gzip
@@ -103,7 +103,7 @@ example.com {
 }
 ```
 
-#### 代理站点目录
+#### 代理站点目录示例
 ```
 example.com {
     root * /var/www
