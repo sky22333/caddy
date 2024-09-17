@@ -6,7 +6,7 @@
 
 | 命令                          | 说明                     |
 |-------------------------------|--------------------------|
-| `sudo apt install nginx -yq`   | 安装 Nginx               |
+| `sudo apt update && sudo apt install -yq nginx` | 安装 Nginx               |
 | `sudo systemctl start nginx`   | 启动 Nginx               |
 | `sudo systemctl stop nginx`    | 停止 Nginx               |
 | `sudo systemctl restart nginx` | 重启 Nginx               |
