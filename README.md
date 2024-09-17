@@ -6,8 +6,7 @@
 
 | 命令                          | 说明                     |
 |-------------------------------|--------------------------|
-| `sudo apt update`              | 更新软件包列表           |
-| `sudo apt install nginx`       | 安装 Nginx               |
+| `sudo apt install nginx -yq`   | 安装 Nginx               |
 | `sudo systemctl start nginx`   | 启动 Nginx               |
 | `sudo systemctl stop nginx`    | 停止 Nginx               |
 | `sudo systemctl restart nginx` | 重启 Nginx               |
@@ -15,6 +14,7 @@
 | `sudo systemctl status nginx`  | 查看 Nginx 状态          |
 | `sudo systemctl enable nginx`  | 启用 Nginx 开机自启动    |
 | `sudo systemctl disable nginx` | 禁用 Nginx 开机自启动    |
+| `sudo apt purge nginx` | 完全卸载 Ngxin          |
 
 | 配置文件路径                  | 说明                     |
 |-------------------------------|--------------------------|
