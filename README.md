@@ -1,4 +1,4 @@
-## nginx文档
+# Nginx
 
 
 <details>
@@ -31,7 +31,7 @@
 </details>
 
 
-# caddy教程：
+# Caddy
 
 <details>
   <summary>Docker部署</summary>
@@ -57,8 +57,8 @@ services:
 ---
 ---
 
-
-##### apt包安装步骤：
+<details>
+  <summary>apt安装caddy命令</summary>
 ```
 sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
@@ -66,7 +66,7 @@ curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo 
 sudo apt update
 sudo apt install caddy -yq
 ```
-
+</details>
 
 
 
