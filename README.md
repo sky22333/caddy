@@ -10,6 +10,7 @@
 | `sudo systemctl start nginx`   | 启动 Nginx               |
 | `sudo systemctl stop nginx`    | 停止 Nginx               |
 | `sudo systemctl restart nginx` | 重启 Nginx               |
+| `sudo nginx -t`                | 检查 Nginx 配置           |
 | `sudo systemctl reload nginx`  | 重新加载 Nginx 配置      |
 | `sudo systemctl status nginx`  | 查看 Nginx 状态          |
 | `sudo systemctl enable nginx`  | 启用 Nginx 开机自启动    |
@@ -74,38 +75,17 @@ sudo apt install caddy -yq
 sudo apt install -yq debian-keyring debian-archive-keyring apt-transport-https curl && curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg && curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list && sudo apt update -q && sudo apt install -yq caddy
 ```
 
-#### 启动：
-```
-sudo systemctl restart caddy
-```
+| 命令或路径                                          | 说明                         |
+|-----------------------------------------------------|------------------------------|
+| `sudo systemctl restart caddy`                      | 启动或重启 Caddy                   |
+| `systemctl status caddy`                            | 查看 Caddy 运行状态           |
+| `journalctl -u caddy`                              | 查看 Caddy 日志           |
+| `caddy validate --config /etc/caddy/Caddyfile`      | 检查 Caddy 配置文件           |
+| `sudo systemctl stop caddy`                         | 停止 Caddy 服务               |
+| `sudo apt-get purge --auto-remove caddy`            | 完全卸载 Caddy                |
+| `/etc/caddy/Caddyfile`                              | Caddy 配置文件路径            |
+| `/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory` | Caddy 证书存储路径            |
 
-#### 运行状态
-```
-systemctl status caddy
-```
-### 检查配置文件
-```
-caddy validate --config /etc/caddy/Caddyfile
-```
-#### 停止服务
-```
-sudo systemctl stop caddy
-```
-
-#### 完全卸载
-```
-sudo apt-get purge --auto-remove caddy
-```
-
-#### 配置文件：
-
-路径`/etc/caddy/Caddyfile`
-
-
-#### 证书路径
-```
-/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory
-```
 
 #### 反向代理
 ```
