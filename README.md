@@ -11,6 +11,7 @@
 | `sudo systemctl stop nginx`    | 停止 Nginx               |
 | `sudo systemctl restart nginx` | 重启 Nginx               |
 | `sudo nginx -t`                | 检查 Nginx 配置           |
+| `sudo journalctl -u nginx`                | 查看 Nginx 日志           |
 | `sudo systemctl reload nginx`  | 重新加载 Nginx 配置      |
 | `sudo systemctl status nginx`  | 查看 Nginx 状态          |
 | `sudo systemctl enable nginx`  | 启用 Nginx 开机自启动    |
