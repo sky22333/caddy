@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今天吃什么 - 美食选择器</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .intro {
+            background-color: #f1f8ff;
+            border-left: 5px solid #3498db;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            border-radius: 0 10px 10px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+        .button:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        .button:active {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        #result {
+            font-size: 28px;
+            margin-top: 30px;
+            font-weight: bold;
+            color: #e74c3c;
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        @keyframes spin {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { transform: translateY(0); opacity: 1; }
+            90% { transform: translateY(-100%); opacity: 1; }
+            100% { transform: translateY(-100%); opacity: 0; }
+        }
+        .spinning {
+            animation: spin 0.1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>今天吃什么</h1>
+        
+        <div class="intro">
+            <p>"今天吃什么"是一款专为解决日常饮食选择困扰的应用。在繁忙的生活中，很多人都面临着每天都不知道吃什么的困境。这款小工具旨在为您提供个性化的饮食建议，让您轻松规划每一餐。</p>
+        </div>
+
+        <button onclick="chooseMeal()" class="button">开始选择</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const meals = [
+            // 中国菜系
+            "麻婆豆腐", "宫保鸡丁", "鱼香肉丝", "回锅肉", "水煮鱼", "辣子鸡", "夫妻肺片", "毛血旺", "东坡肉", "干煸四季豆",
+            "麻辣香锅", "冷吃兔", "蒜泥白肉", "川北凉粉", "泡椒凤爪", "酸菜鱼", "辣椒炒肉", "口水鸡", "担担面", "串串香",
+            "白切鸡", "叉烧", "烧鹅", "虾饺", "肠粉", "蒸排骨", "豉汁蒸鱼", "清蒸海鲜", "咕噜肉", "蚝油牛肉",
+            "干炒牛河", "白灼虾", "菠萝咕噜肉", "梅菜扣肉", "荷叶糯米鸡", "香芋扣鸭", "沙姜鸡", "鱼头豆腐汤", "蜜汁叉烧", "脆皮烧肉",
+            "糖醋鲤鱼", "葱爆羊肉", "锅塌豆腐", "地三鲜", "九转大肠", "油焖大虾", "红烧海参", "糖醋鱼", "鲍鱼", "红烧牛肉",
+            "四喜丸子", "葱烧海参", "山东煎饼", "德州扒鸡", "糖醋排骨", "烤全羊", "清炖羊肉", "葱烧鲫鱼", "炸鸡腿", "酱爆鸡丁",
+            "松鼠桂鱼", "清炒虾仁", "六合叉烧", "红烧狮子头", "扬州炒饭", "盐水鸭", "三套鸭", "鸭血粉丝汤", "无锡排骨", "腌笃鲜",
+            "蟹粉豆腐", "清蒸大闸蟹", "苏式熏鱼", "桂花糯米藕", "叫化鸡", "淮扬狮子头", "清炒蟹粉", "酱排骨", "苏式东坡肉", "太湖三白",
+            "西湖醋鱼", "东坡肉", "龙井虾仁", "宋嫂鱼羹", "叫化童子鸡", "醉蟹", "油焖笋", "荷叶粉蒸肉", "腌笃鲜", "糟溜鱼片",
+            "虾爆鳝面", "杭州酱鸭", "干炸响铃", "莼菜汤", "鱼头豆腐", "葱油桂鱼", "腰果虾仁", "茶叶蛋", "萝卜丝饼", "笋干烧肉",
+            "剁椒鱼头", "口味虾", "糖醋排骨", "湘味牛肉", "农家小炒肉", "擂辣椒皮蛋", "臭豆腐", "湖南糖油粑粑", "酸辣鸡杂", "蒜苗回锅肉",
+            "洞庭湖芦蒿", "姜汁热凉粉", "长沙臭豆腐", "湘西腊肉", "湘味鸡", "湖南辣椒炒肉", "剁椒蒸鱼", "酸萝卜老鸭汤", "青椒皮蛋", "湘味牛肉",
+            "佛跳墙", "沙茶面", "福州鱼丸", "荔枝肉", "花生汤", "醉糟鸡", "厦门海蛎煎", "土笋冻", "炸五香", "南煎丸子",
+            "烧肉粽", "蚵仔煎", "鱼头豆腐汤", "沙茶牛肉", "闽南咸水鸭", "福州芋泥", "泉州面线", "炒海蛤", "香菇茶树菇", "鱼丸汤",
+            "臭鳜鱼", "火腿炖甲鱼", "徽州毛豆腐", "腌鲜鱼", "徽式烧肉", "徽州臭豆腐", "徽州煮鸡", "石耳炖鸡", "凉拌折耳根", "徽州炒蟹",
+            "徽州炖羊肉", "徽州三杯鸡", "徽式红烧肉", "徽州麻糍", "徽州板栗烧鸡", "徽式腊肉", "徽州毛豆腐", "徽州臭鳜鱼", "徽式三杯鸡", "徽州炖鸭",
+            "新疆大盘鸡", "兰州牛肉面", "重庆火锅", "北京烤鸭", "天津狗不理包子", "西安肉夹馍", "陕西凉皮", "云南过桥米线", "贵州酸汤鱼", "内蒙古烤羊腿",
+            "东北锅包肉", "东北乱炖", "哈尔滨红肠", "山西刀削面", "河南烩面", "开封灌汤包", "宁夏羊肉串", "青海酸奶", "新疆羊肉串", "上海小笼包",
+            // 国际美食
+            "寿司", "刺身", "天妇罗", "拉面", "味增汤", "章鱼烧", "烤鳗鱼", "亲子丼", "炸猪排", "寿喜烧",
+            "泡菜", "烤肉", "石锅拌饭", "冷面", "部队锅", "炒年糕", "辣炒年糕", "韩式炸鸡", "参鸡汤", "海鲜pancake",
+            "披萨", "意大利面", "千层面", "提拉米苏", "烩饭", "卡邦尼意面", "肉酱面", "意大利烩饭", "蛤蜊意面", "番茄意面",
+            "法式蜗牛", "鹅肝", "牛排", "焗蜗牛", "法式洋葱汤", "普罗旺斯炖菜", "烤鸭胸", "舒芙蕾", "法式奶油蘑菇汤", "法式海鲜汤",
+            "汉堡", "热狗", "炸鸡", "苹果派", "芝士蛋糕", "烤肋排", "巧克力曲奇", "玉米浓汤", "金枪鱼三明治", "炸鱿鱼圈",
+            "玉米卷", "墨西哥卷饼", "墨西哥炒蛋", "玉米片", "鳄梨酱", "玉米饼", "辣酱", "墨西哥辣椒", "墨西哥烤肉", "玉米粥",
+            "冬阴功汤", "泰式炒河粉", "咖喱蟹", "泰式青木瓜沙拉", "泰式椰汁鸡", "泰式炒饭", "泰式柠檬鱼", "泰式咖喱", "泰式凉拌海鲜", "泰式椰汁虾",
+            "咖喱鸡", "印度飞饼", "tandoori鸡", "咖喱羊肉", "印度奶茶", "咖喱鱼", "咖喱牛肉", "印度炒饭", "咖喱蔬菜", "印度炸鸡",
+            "越南河粉", "越南春卷", "越南法式面包", "越南咖啡", "越南炒粉", "越南凉拌米线", "越南炸春卷", "越南猪肉米纸卷", "越南炸鱼饼", "越南煎饼",
+            "烤羊肉串", "沙威玛", "鹰嘴豆泥", "烤茄子酱", "法拉费", "塔布勒", "中东烤肉", "阿拉伯烤肉", "烤全羊", "中东烤鸡"
+        ];
+
+        function chooseMeal() {
+            const resultDiv = document.getElementById("result");
+            resultDiv.classList.add("spinning");
+            
+            let duration = 3000; // 动画持续时间（毫秒）
+            let interval = 50; // 每次更新的间隔（毫秒）
+            let steps = duration / interval;
+            let currentStep = 0;
+
+            const intervalId = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * meals.length);
+                resultDiv.innerText = meals[randomIndex];
+                currentStep++;
+
+                if (currentStep >= steps) {
+                    clearInterval(intervalId);
+                    resultDiv.classList.remove("spinning");
+                    const finalChoice = meals[Math.floor(Math.random() * meals.length)];
+                    resultDiv.innerText = `今天吃：${finalChoice}`;
+                }
+            }, interval);
+        }
+    </script>
+</body>
+</html>
