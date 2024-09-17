@@ -22,8 +22,8 @@
 | `/etc/nginx/nginx.conf`        | 主配置文件               |
 | `/etc/nginx/sites-available/`  | 站点配置文件目录         |
 | `/etc/nginx/sites-enabled/`    | 启用的站点配置文件目录   |
-| `/var/log/nginx/access.log`    | 访问日志文件             |
-| `/var/log/nginx/error.log`     | 错误日志文件             |
+| `tail -f /var/log/nginx/access.log`    | 查看访问日志             |
+| `tail -f /var/log/nginx/error.log`     | 查看错误日志             |
 | `/etc/nginx/conf.d/`           | 自定义配置文件目录       |
 | [Nginx 配置生成器](https://www.digitalocean.com/community/tools/nginx) | 在线生成 Nginx 配置 |
 
