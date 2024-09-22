@@ -115,3 +115,26 @@ example.com {
 
 ---
 
+#### 内网自签证书
+
+```
+domain.com {
+    reverse_proxy 127.0.0.1:8080  # 反代本地服务
+    tls internal  # 自签证书
+}
+```
+
+
+ **CA证书默认存储在`Caddy`的数据目录中，通常可以在以下路径找到：** 
+
+
+Linux/macOS: `~/.local/share/caddy`
+
+Windows: `C:\Users\<YourUser>\AppData\Roaming\Caddy`
+
+可以将 `pki/authorities/local/root.crt` 文件复制到客户端设备并安装到受信任的证书存储中。
+
+Docker部署的证书文件在容器内的`/data`目录
+
+---
+
