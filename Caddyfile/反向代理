@@ -1,4 +1,4 @@
 example.com {
-    encode gzip
+    encode brotli gzip
     reverse_proxy localhost:8080
 }
