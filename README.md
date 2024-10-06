@@ -98,7 +98,7 @@ Caddy 证书存储路径  `/var/lib/caddy/.local/share/caddy/certificates/acme-v
 #### 反向代理示例
 ```
 example.com {
-    encode gzip
+    encode brotli gzip
     reverse_proxy localhost:8080
 }
 ```
@@ -107,7 +107,7 @@ example.com {
 ```
 example.com {
     root * /var/www
-    encode zstd gzip
+    encode brotli gzip
     file_server
 }
 ```
