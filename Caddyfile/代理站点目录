@@ -1,5 +1,5 @@
 example.com {
     root * /var/www
-    encode zstd gzip
+    encode brotli gzip
     file_server
 }
