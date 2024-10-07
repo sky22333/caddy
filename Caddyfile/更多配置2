@@ -3,7 +3,7 @@ example.com {
     root * /var/www
     
     # 启用 zstd 和 gzip 压缩
-    encode brotli gzip
+    encode zstd gzip
     
     # 启用文件服务器
     file_server
