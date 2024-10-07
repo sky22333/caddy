@@ -6,7 +6,7 @@ mail.example.com:1080 mail.example.lan:1080 {
 # 静态文件服务/data/www，并且example.org/admin反向代理到http://127.0.0.1:8080
 example.org {
         root * /data/www
-        encode brotli gzip
+        encode zstd gzip
         file_server
         redir /admin  /admin/ 301
         reverse_proxy /admin/* http://127.0.0.1:8080 {
