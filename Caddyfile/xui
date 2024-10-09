@@ -1,4 +1,6 @@
 example.com {
+    respond / "Hello World"
+
     # /mianban/路径反代到 xui面板
     reverse_proxy /mianban/* 127.0.0.1:54321
     
