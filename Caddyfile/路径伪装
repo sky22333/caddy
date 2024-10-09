@@ -3,5 +3,5 @@ example.com {
     redir / https://www.bing.com{uri}
 
     # 访问特定路径转发到面板
-    reverse_proxy /admin/* localhost:1234
+    reverse_proxy /admin/* localhost:54321
 }
