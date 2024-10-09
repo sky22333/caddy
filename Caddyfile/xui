@@ -1,0 +1,9 @@
+example.com {
+    # /mianban/路径反代到 xui面板
+    reverse_proxy /mianban/* 127.0.0.1:54321
+    
+    # /api路径反代到节点
+    reverse_proxy /api 127.0.0.1:8443
+}
+
+# xui面板vless+ws+tls协议通过caddy前置代理，节点的HTTP2需要改成HTTP3，面板设置里监听127.0.0.1，域名可直接开启CDN
