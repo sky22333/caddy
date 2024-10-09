@@ -1,5 +1,5 @@
 example.com {
-    # 访问域名重定向到Bing
+    # 访问主域名重定向到Bing
     redir / https://www.bing.com{uri}
 
     # 访问特定路径转发到面板
