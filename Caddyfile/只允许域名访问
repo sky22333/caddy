@@ -1,0 +1,10 @@
+example.com {
+    root * /var/www
+    encode zstd gzip
+    file_server
+}
+
+# 拒绝直接通过IP访问，防止被扫描源站IP
+:80, :443 {
+    respond "Access denied" 403
+}
