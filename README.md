@@ -1,6 +1,5 @@
 # Nginx文档
 
-
 <details>
   <summary>nginx常用命令</summary>
 
@@ -36,6 +35,8 @@
 ---
 
 # Caddy文档
+
+> [caddy模块查询文档](https://caddyserver.com/docs/modules/)
 
 <details>
   <summary>Docker部署</summary>
