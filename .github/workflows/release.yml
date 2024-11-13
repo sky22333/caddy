@@ -1,4 +1,4 @@
-name: Build Release Caddy
+name: 编译Caddy二进制包
 
 on:
   workflow_dispatch:
@@ -68,7 +68,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.event.inputs.version }}
-          name: "Release ${{ github.event.inputs.version }}"
+          name: "${{ github.event.inputs.version }}"
           draft: false
           prerelease: false
           files: |
