@@ -1,0 +1,17 @@
+# 必须使用本仓库编译的caddy才支持此功能
+example.com {
+    encode gzip
+
+    @allowedIPs {
+        remote_ip 192.168.1.10
+        remote_ip 192.168.1.1/20
+    }
+
+    handle @allowedIPs {
+        reverse_proxy 127.0.0.1:8080
+    }
+
+    handle {
+        respond "Access Denied" 403
+    }
+}
