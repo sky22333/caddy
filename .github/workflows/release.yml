@@ -87,4 +87,4 @@ jobs:
             ## SHA256 Checksums
             See the attached .sha256 files for verification.
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
