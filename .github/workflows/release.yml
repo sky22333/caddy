@@ -1,4 +1,4 @@
-name: Build and Release Caddy
+name: Build Release Caddy
 
 on:
   workflow_dispatch:
