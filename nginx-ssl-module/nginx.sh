@@ -7,7 +7,7 @@ apt-get install -y build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev \
     libjson-c-dev
 
 # 下载并解压nginx源码
-NGINX_VERSION="1.24.0"
+NGINX_VERSION="1.26.0"
 wget "http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz"
 tar -xzvf "nginx-${NGINX_VERSION}.tar.gz"
 cd "nginx-${NGINX_VERSION}"
