@@ -76,8 +76,9 @@ jobs:
             caddy-${{ matrix.os }}-${{ matrix.arch }}.zip.sha256
           body: |
             Custom Caddy build with:
-            - BR compression support
-            - Remote IP module
+            - 增加IP限制模块
+            - 增加用户认证模块
+            - 增加访问速率模块
 
             ## Supported platforms
             - Linux (amd64, arm64)
