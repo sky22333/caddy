@@ -1,4 +1,4 @@
-name: 编译Caddy二进制包
+name: 编译二进制文件
 
 on:
   workflow_dispatch:
