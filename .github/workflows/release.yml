@@ -21,10 +21,6 @@ jobs:
             arch: arm64
           - os: windows
             arch: amd64
-          - os: darwin
-            arch: amd64
-          - os: darwin
-            arch: arm64
 
     steps:
       - name: Checkout code
@@ -47,6 +43,7 @@ jobs:
           if [ "${{ matrix.os }}" = "windows" ]; then
             output_name="${output_name}.exe"
           fi
+          # 构建Caddy并安装插件
           xcaddy build \
             --with github.com/caddyserver/caddy/v2 \
             --with github.com/mholt/caddy-ratelimit \
