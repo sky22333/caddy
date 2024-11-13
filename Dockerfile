@@ -18,7 +18,7 @@ COPY --from=builder /app/caddy /usr/bin/caddy
 
 WORKDIR /app
 
-RUN touch /etc/caddy/Caddyfile
+RUN mkdir -p /etc/caddy && touch /etc/caddy/Caddyfile
 
 EXPOSE 80 443
 
