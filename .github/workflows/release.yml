@@ -49,8 +49,9 @@ jobs:
           fi
           xcaddy build \
             --with github.com/caddyserver/caddy/v2 \
-            --with github.com/caddyserver/caddy/v2/modules/caddyhttp/encode/br \
-            --with github.com/caddyserver/caddy/v2/modules/caddyhttp/remoteip \
+            --with github.com/mholt/caddy-ratelimit \
+            --with github.com/lanrat/caddy-dynamic-remoteip \
+            --with github.com/greenpau/caddy-security \
             --output $output_name
 
       - name: Create ZIP archive
