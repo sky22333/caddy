@@ -5,8 +5,9 @@ RUN go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 # 构建Caddy并安装插件
 RUN xcaddy build \
     --with github.com/caddyserver/caddy/v2 \
-    --with github.com/caddyserver/caddy/v2/modules/caddyhttp/encode/br \
-    --with github.com/caddyserver/caddy/v2/modules/caddyhttp/remoteip
+    --with github.com/mholt/caddy-ratelimit \
+    --with github.com/lanrat/caddy-dynamic-remoteip \
+    --with github.com/greenpau/caddy-security
 
 FROM alpine
 
