@@ -1,0 +1,6 @@
+example.com {
+    reverse_proxy {
+        to https://pkg-containers.githubusercontent.com
+        header_up Host {upstream_hostport}
+    }
+}
