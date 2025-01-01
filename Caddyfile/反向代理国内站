@@ -1,0 +1,8 @@
+example.com {
+    reverse_proxy http://192.168.9.10:8080 {
+        header_up Host {upstream_hostport}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
