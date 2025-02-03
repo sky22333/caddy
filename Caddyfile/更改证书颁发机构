@@ -1,14 +1,4 @@
-# 1：全局配置 Google (GTS) 作为默认 CA
-{
-    acme_ca https://acme.pki.goog/directory
-}
-
-example.com {
-    reverse_proxy localhost:8080
-}
-
-
-# 2：全局配置 ZeroSSL 作为默认 CA
+# 1：全局配置 ZeroSSL 作为默认 CA
 {
     acme_ca https://acme.zerossl.com/v2/DV90
     email your-email@example.com
@@ -20,7 +10,7 @@ example.com {
 }
 
 
-# 3：为特定站点配置 ZeroSSL
+# 2：为特定站点配置 ZeroSSL
 example.com {
     encode zstd gzip
     reverse_proxy localhost:8080
@@ -31,7 +21,7 @@ example.com {
     }
 }
 
-# 4：指定本地证书和私钥
+# 3：指定本地证书和私钥
 example.com {
     encode zstd gzip
     reverse_proxy localhost:8080
