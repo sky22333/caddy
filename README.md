@@ -139,9 +139,9 @@ Docker部署的证书文件在容器内的`/data`目录
 
 ---
 
-### win系统运行
+## win系统运行
 
-[下载](https://github.com/caddyserver/caddy/releases)对应的win版本
+[下载caddy](https://github.com/caddyserver/caddy/releases)对应的win版本
 
 将`Caddyfile`和`caddy.exe`放在同一个目录下，然后在这个路径下执行`caddy.exe run`运行
 
