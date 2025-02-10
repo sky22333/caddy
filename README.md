@@ -139,3 +139,45 @@ Docker部署的证书文件在容器内的`/data`目录
 
 ---
 
+### win系统运行
+
+[下载](https://github.com/caddyserver/caddy/releases)对应的win版本
+
+将`Caddyfile`和`caddy.exe`放在同一个目录下，然后在这个路径下执行`caddy.exe run`运行
+
+#### win系统放行端口
+
+`Win + R`打开运行窗口，输入`control`回车，打开控制面板。
+
+`控制面板` > `系统和安全` > `Windows Defender 防火墙` > `高级设置` > `左侧入站规则` > `右侧新建规则` > `端口` > `下一步`
+
+然后就可以放行端口了，放行出站规则同理。
+
+#### 使用任务调度器后台运行Caddy
+1. 创建任务
+
+管理员打开`cmd`命令窗口
+```
+schtasks /create /tn "Caddy" /tr "C:\Caddy\caddy.exe run" /sc onstart /ru "SYSTEM"
+```
+注意修改`C:\Caddy\caddy.exe`这个实际路径
+
+2. 查看任务
+```
+schtasks /query /tn "Caddy"
+```
+
+3. 启动任务
+```
+schtasks /run /tn "Caddy"
+```
+
+4. 删除任务
+```
+schtasks /delete /tn "Caddy" /f
+```
+
+5. 关闭caddy进程
+```
+taskkill /F /IM caddy.exe
+```
