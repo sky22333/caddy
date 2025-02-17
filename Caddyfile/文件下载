@@ -1,3 +1,7 @@
+# 权限设置
+# chmod 755 /home
+# chmod 644 /home/*
+
 # 添加 browse 参数启用目录浏览
 :80 {
     root * /home
@@ -6,11 +10,23 @@
 }
 
 
-# 隐藏特定文件类型
 :80 {
     root * /home
+    # 限制访问上级目录和防止目录遍历
     file_server browse {
-        hide *.txt *.conf
+        hide .*          # 隐藏以点开头的隐藏文件
+        hide .*/*        # 阻止访问隐藏目录
+        hide ../         # 阻止访问上级目录
     }
     encode zstd gzip
+    
+    # 添加安全headers
+    header {
+        # 禁止在frame中显示
+        X-Frame-Options "DENY"
+        # 启用XSS过滤
+        X-XSS-Protection "1; mode=block"
+        # 禁止MIME类型嗅探
+        X-Content-Type-Options "nosniff"
+    }
 }
