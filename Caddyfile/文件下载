@@ -1,0 +1,16 @@
+# 添加 browse 参数启用目录浏览
+:80 {
+    root * /home
+    file_server browse
+    encode zstd gzip
+}
+
+
+# 隐藏特定文件类型
+:80 {
+    root * /home
+    file_server browse {
+        hide *.txt *.conf
+    }
+    encode zstd gzip
+}
