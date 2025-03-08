@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --text-color: #333;
+            --card-bg: white;
+            --heading-color: #2c3e50;
+            --link-color: #3498db;
+            --footer-color: #666;
+        }
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --card-bg: #2c2c2c;
+            --heading-color: #ffffff;
+            --link-color: #63b3ed;
+            --footer-color: #999;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+        h1 {
+            color: var(--heading-color);
+            margin-bottom: 20px;
+            transition: color 0.3s;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: var(--footer-color);
+            margin-top: 20px;
+            transition: color 0.3s;
+        }
+        .footer a {
+            color: var(--footer-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 24px;
+            transition: transform 0.3s;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">🌓</button>
+    <div class="container">
+        <div class="icon">🛠️</div>
+        <h1>网站维护中</h1>
+        <p>非常抱歉，我们的网站正在进行例行维护。我们正在努力改进，以便为您提供更好的服务。</p>
+        <p>预计恢复时间：<strong>未知</strong></p>
+        <p>感谢您的耐心等待和理解。</p>
+    </div>
+
+    <footer class="footer">
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">ICP备案号</a> | 
+        <a href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" rel="noopener noreferrer">公安备案号</a>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        function handleThemeChange(e) {
+            if (savedTheme) return;
+            if (e.matches) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+        mediaQuery.addListener(handleThemeChange);
+        handleThemeChange(mediaQuery);
+    </script>
+</body>
+</html>
