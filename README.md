@@ -104,6 +104,19 @@ example.com {
 }
 ```
 
+#### 反代并获取CF后端真实IP
+```
+example.com {
+    reverse_proxy {
+        to 127.0.0.1:8080
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+        header_up CF-Connecting-IP {remote}
+    }
+}
+```
+
 #### 代理站点目录示例
 ```
 example.com {
