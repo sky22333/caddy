@@ -1,0 +1,10 @@
+# 指定环境变量命令：export CLOUDFLARE_API_KEY="你的API Key"
+# 需要v2.10版本以上支持
+{
+	dns cloudflare {env.CLOUDFLARE_API_KEY}
+	ech ech.example.com
+}
+
+example.com {
+	reverse_proxy localhost:8080
+}
