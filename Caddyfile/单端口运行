@@ -1,0 +1,9 @@
+# 此配置不会占用80和443端口，需要证书申请完成后再修改
+{
+    auto_https disable_redirects
+}
+
+https://example.com:8443 {
+    bind 0.0.0.0
+    reverse_proxy localhost:8899
+}
