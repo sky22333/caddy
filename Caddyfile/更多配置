@@ -107,6 +107,8 @@ nas.example.com {
         redir /plex  /plex/ 301
 # 路径重写
 	rewrite /old /new
+# 前端单页应用（SPA）支持
+        try_files {path} /index.html     # 如果请求的文件不存在，返回 `index.html`（用于 Vue/React 等前端框架）
 
 # 处理plex静态引用的media目录
         handle /media/* {
