@@ -104,7 +104,9 @@ nas.example.com {
                 reverse_proxy  http://127.0.0.1:32400
         }
 # 重定向不带/的路径到/
-          redir /plex  /plex/ 301
+        redir /plex  /plex/ 301
+# 路径重写
+	rewrite /old /new
 
 # 处理plex静态引用的media目录
         handle /media/* {
