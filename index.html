@@ -14,14 +14,14 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #1e1e1e; /* 黑色背景 */
+            background-color: #1e1e1e;
             font-family: Arial, sans-serif;
         }
         #container {
             width: 95%;
-            height: 95%; /* 增加编辑器高度 */
+            height: 95%;
             border: 2px solid #333;
-            border-radius: 10px;
+            border-radius: 6px;
             overflow: hidden;
         }
         /* 悬浮块样式 */
@@ -33,7 +33,7 @@
             border: 1px solid #333;
             border-radius: 5px;
             padding: 6px;
-            z-index: 1000; /* 确保悬浮块在最上层 */
+            z-index: 1000;
         }
         select {
             background-color: #333;
@@ -57,7 +57,6 @@
 <div id="container"></div>
 
 <div id="floating-panel">
-    <label for="language-select">代码语言:</label>
     <select id="language-select">
         <option value="shell">Shell</option>
         <option value="javascript">JavaScript</option>
@@ -76,7 +75,6 @@
         <option value="swift">Swift</option>
         <option value="kotlin">Kotlin</option>
     </select>
-    <label for="page-language-select">页面语言:</label>
     <select id="page-language-select">
         <option value="zh">中文</option>
         <option value="en">English</option>
