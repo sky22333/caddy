@@ -8,11 +8,12 @@ RUN xcaddy build \
     --with github.com/mholt/caddy-ratelimit \
     --with github.com/lanrat/caddy-dynamic-remoteip \
     --with github.com/greenpau/caddy-security \
+    --with github.com/caddy-dns/cloudflare  \
     --output /app/caddy
 
 FROM alpine
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat curl
 
 COPY --from=builder /app/caddy /usr/bin/caddy
 
