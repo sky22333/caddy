@@ -1,8 +1,9 @@
-# 指定环境变量命令：export CLOUDFLARE_API_KEY="你的API Key"
 # DNS申请证书需要编译DNS插件
 # 需要2.10版本以上支持
+# 如果需要重新部署则需要删除/root/.local/share/caddy锁文件
+# ech这里要使用公共域名，所以无需修改
 {
-	dns cloudflare {env.CLOUDFLARE_API_KEY}
+	dns cloudflare xxxxxxxxxxxxxxxxxxxxx
 	ech ech.example.com
 }
 
