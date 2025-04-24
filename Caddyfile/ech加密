@@ -1,5 +1,6 @@
 # 指定环境变量命令：export CLOUDFLARE_API_KEY="你的API Key"
-# 需要v2.10版本以上支持
+# DNS申请证书需要编译DNS插件
+# 需要2.10版本以上支持
 {
 	dns cloudflare {env.CLOUDFLARE_API_KEY}
 	ech ech.example.com
