@@ -1,0 +1,10 @@
+# 防盗链实现，检查HTTP请求头中的Referer字段，指定仅允许的域名请求
+example.com {
+    @validReferers {
+        # 允许访问的域名
+        header Referer *yourdomain1.com
+        header Referer *yourdomain2.com
+    }
+
+    respond @validReferers "Forbidden" 403
+}
