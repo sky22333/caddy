@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>粒子星空效果</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #171717;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starCanvas"></canvas>
+
+  <!-- Three.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
+
+  <script>
+    const canvas = document.getElementById('starCanvas');
+    const renderer = new THREE.WebGLRenderer({ canvas });
+    renderer.setClearColor(new THREE.Color("#171717"));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    const light = new THREE.AmbientLight(0xffffff, 2);
+    scene.add(light);
+
+    const pointLight = new THREE.PointLight(0xffffff, 2);
+    scene.add(pointLight);
+
+    // 内嵌的SVG
+    const svgData = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="64" result="blur" />
+          </filter>
+          <filter id="centerGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="40" result="blur" />
+          </filter>
+        </defs>
+        <!-- 外圈柔光的黄色粒子，边缘更模糊 -->
+        <circle cx="512" cy="512" r="300" fill="yellow" filter="url(#glow)" />
+        <!-- 中心更大且边缘更模糊的白色粒子 -->
+        <circle cx="512" cy="512" r="250" fill="white" filter="url(#centerGlow)" />
+      </svg>
+    `;
+
+    // 将SVG转为Data URL
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+    const svgUrl = URL.createObjectURL(svgBlob);
+
+    const textureLoader = new THREE.TextureLoader();
+    const dotTexture = textureLoader.load(svgUrl, render); // 使用内嵌的SVG
+
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particleCount = 3000;
+    const vertices = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount; i++) {
+      vertices[i * 3] = (Math.random() - 0.5) * 20;
+      vertices[i * 3 + 1] = (Math.random() - 0.5) * 20;
+      vertices[i * 3 + 2] = (Math.random() - 0.5) * 50;
+    }
+
+    particlesGeometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+
+    const particlesMaterial = new THREE.PointsMaterial({
+      map: dotTexture,
+      size: 0.05,
+      color: "#fff",
+      transparent: true,
+      depthWrite: false,
+    });
+
+    const stars = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(stars);
+
+    const speed = 0.0002;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      stars.rotation.x += speed;
+      stars.rotation.y += speed;
+      renderer.render(scene, camera);
+    }
+
+    function render() {
+      animate();
+    }
+
+    window.addEventListener("resize", () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+  </script>
+</body>
+</html>
