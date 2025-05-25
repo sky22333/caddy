@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>点阵背景示例</title>
+  <style>
+    :root {
+      --bg-dot-color: rgba(0, 0, 0, 0.1);
+      --bg-dot-size: 10%;
+      --bg: radial-gradient(
+        closest-side,
+        var(--bg-dot-color) var(--bg-dot-size),
+        transparent 0
+      ) #ffffff;
+    }
+
+    body {
+      background: var(--bg);
+      background-size: 20px 20px;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+    }
+
+    .card {
+      background: white;
+      padding: 2rem 3rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>你好，世界！</h1>
+    <p>这是一个带有点阵背景的页面示例。</p>
+  </div>
+</body>
+</html>
