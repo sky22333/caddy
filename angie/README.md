@@ -1,5 +1,9 @@
 ### Angie是nginx初代工程师维护的魔改版本，拥有自动配置SSL证书的特性。
 
+官方文档：https://cn.angie.software/angie/docs/
+
+官方仓库：https://github.com/webserver-llc/angie
+
 ### 一键安装
 
 ```
