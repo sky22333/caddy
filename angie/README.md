@@ -91,3 +91,32 @@ sudo journalctl -u angie -f
 ├── private.key
 └── chain.pem
 ```
+
+### 完全卸载
+```
+# 1. 停止 Angie 服务
+sudo systemctl stop angie
+
+# 2. 禁用 Angie 服务，避免开机自启
+sudo systemctl disable angie
+
+# 3. 卸载 Angie 软件包
+sudo apt remove --purge -y angie
+
+# 4. 删除 Angie 软件源文件
+sudo rm -f /etc/apt/sources.list.d/angie.list
+
+# 5. 删除 Angie 官方 GPG 密钥文件
+sudo rm -f /etc/apt/trusted.gpg.d/angie.gpg
+
+# 6. 更新 apt 包索引（移除源后更新）
+sudo apt update
+
+# 7. 删除 Angie 相关的日志和配置目录
+sudo rm -rf /var/log/angie
+sudo rm -rf /etc/angie
+sudo rm -rf /run/angie.pid
+
+# 8. 查看是否有残留
+dpkg -l | grep angie
+```
