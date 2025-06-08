@@ -1,4 +1,4 @@
-### Angie是nginx初代工程师维护的fork版本，拥有自动配置SSL证书的特性。
+### Angie是nginx初代工程师开发维护的fork版本，拥有自动配置SSL证书的特性。
 
 官方文档：https://cn.angie.software/angie/docs/
 
