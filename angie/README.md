@@ -4,6 +4,8 @@
 
 官方仓库：https://github.com/webserver-llc/angie
 
+相关docker镜像：https://hub.docker.com/r/eilandert/angie/tags
+
 ### 一键安装
 
 ```
