@@ -7,11 +7,22 @@ on:
         description: '发布版本号 (例如: v2.10.0)'
         required: true
         type: string
+      plugins:
+        description: '插件列表 (每行一个插件)'
+        required: true
+        type: string
+        default: |
+          github.com/caddyserver/caddy/v2
+          github.com/mholt/caddy-ratelimit
+          github.com/lanrat/caddy-dynamic-remoteip
+          github.com/greenpau/caddy-security
+          github.com/caddy-dns/cloudflare
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - goos: linux
@@ -22,7 +33,8 @@ jobs:
             suffix: linux-arm64
           - goos: windows
             goarch: amd64
-            suffix: windows-amd64.exe
+            suffix: windows-amd64
+            ext: .exe
     
     steps:
     - name: 检出代码
@@ -36,31 +48,52 @@ jobs:
     - name: 安装 xcaddy
       run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
       
+    - name: 准备插件参数
+      id: prepare
+      run: |
+        plugins="${{ inputs.plugins }}"
+        with_args=""
+        while IFS= read -r line; do
+          if [ -n "$line" ] && [[ ! "$line" =~ ^[[:space:]]*$ ]]; then
+            with_args="$with_args --with $line"
+          fi
+        done <<< "$plugins"
+        echo "with_args=$with_args" >> $GITHUB_OUTPUT
+        
     - name: 构建 Caddy (${{ matrix.suffix }})
       run: |
-        xcaddy build \
-          --with github.com/caddyserver/caddy/v2 \
-          --with github.com/mholt/caddy-ratelimit \
-          --with github.com/lanrat/caddy-dynamic-remoteip \
-          --with github.com/greenpau/caddy-security \
-          --with github.com/caddy-dns/cloudflare
+        xcaddy build ${{ steps.prepare.outputs.with_args }}
       env:
         GOOS: ${{ matrix.goos }}
         GOARCH: ${{ matrix.goarch }}
         
-    - name: 重命名文件
+    - name: 重命名并检查文件
       run: |
         if [ "${{ matrix.goos }}" = "windows" ]; then
-          mv caddy caddy-${{ matrix.suffix }}
+          if [ -f "caddy.exe" ]; then
+            mv caddy.exe caddy-${{ matrix.suffix }}.exe
+          elif [ -f "caddy" ]; then
+            mv caddy caddy-${{ matrix.suffix }}.exe
+          else
+            echo "错误: 找不到构建的二进制文件"
+            ls -la
+            exit 1
+          fi
         else
-          mv caddy caddy-${{ matrix.suffix }}
+          if [ -f "caddy" ]; then
+            mv caddy caddy-${{ matrix.suffix }}
+          else
+            echo "错误: 找不到构建的二进制文件"
+            ls -la
+            exit 1
+          fi
         fi
         
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
       with:
-        name: caddy-${{ matrix.suffix }}
-        path: caddy-${{ matrix.suffix }}
+        name: caddy-${{ matrix.suffix }}${{ matrix.ext }}
+        path: caddy-${{ matrix.suffix }}${{ matrix.ext }}
 
   release:
     needs: build
@@ -69,15 +102,36 @@ jobs:
     - name: 下载所有构建产物
       uses: actions/download-artifact@v4
       
+    - name: 准备发布说明
+      id: release_notes
+      run: |
+        plugins="${{ inputs.plugins }}"
+        echo "## 🚀 Caddy 自定义构建版本" > release_notes.md
+        echo "" >> release_notes.md
+        echo "### 📦 包含的插件:" >> release_notes.md
+        while IFS= read -r line; do
+          if [ -n "$line" ] && [[ ! "$line" =~ ^[[:space:]]*$ ]]; then
+            echo "- \`$line\`" >> release_notes.md
+          fi
+        done <<< "$plugins"
+        echo "" >> release_notes.md
+        echo "### 💻 支持的架构:" >> release_notes.md
+        echo "- Linux AMD64" >> release_notes.md
+        echo "- Linux ARM64" >> release_notes.md
+        echo "- Windows AMD64" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "### 📥 下载说明:" >> release_notes.md
+        echo "请根据您的系统架构选择对应的二进制文件下载。" >> release_notes.md
+        
     - name: 创建发布版本
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ inputs.version }}
-        name: caddy ${{ inputs.version }}
+        name: Caddy 构建版本 ${{ inputs.version }}
+        body_path: release_notes.md
         files: |
           caddy-linux-amd64/caddy-linux-amd64
           caddy-linux-arm64/caddy-linux-arm64
           caddy-windows-amd64.exe/caddy-windows-amd64.exe
-        generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
