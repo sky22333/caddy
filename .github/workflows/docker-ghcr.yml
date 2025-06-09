@@ -1,6 +1,5 @@
-# Github构建镜像示例，请替换GIT_TOKEN密钥，手动触发，自动推送，需要手动关联仓库
+# github镜像自动构建和推送示例，手动触发
 name: ghcr镜像构建
-
 on:
   workflow_dispatch:
     inputs:
@@ -12,28 +11,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+        uses: docker/setup-buildx-action@v3
+            
       - name: Log in to GitHub Docker Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GIT_TOKEN }}
-
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Set version from input
         run: echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
 
@@ -42,4 +36,8 @@ jobs:
           docker buildx build --push \
             --platform linux/amd64,linux/arm64 \
             --tag ghcr.io/${{ github.repository }}:${{ env.VERSION }} \
-            --tag ghcr.io/${{ github.repository }}:latest .
+            --build-arg VERSION=${{ env.VERSION }} \
+            .
+        # 这里结尾的点代表仓库的根目录，如果需要更改子目录则更改这里即可，例如：./node
+        env:
+          GHCR_PUBLIC: true

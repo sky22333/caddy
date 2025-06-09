@@ -1,91 +1,44 @@
-name: 编译二进制文件
+name: Build Caddy with Plugins
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag (e.g. v1.0.0)'
+        description: 'Release version (e.g., v1.0.0)'
         required: true
         type: string
 
 jobs:
   build:
-    name: Build and Release
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - os: linux
-            arch: amd64
-          - os: linux
-            arch: arm64
-          - os: windows
-            arch: amd64
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.21'
-
-      - name: Install xcaddy
-        run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
-
-      - name: Build Caddy
-        env:
-          GOOS: ${{ matrix.os }}
-          GOARCH: ${{ matrix.arch }}
-        run: |
-          output_name="caddy-${{ matrix.os }}-${{ matrix.arch }}"
-          if [ "${{ matrix.os }}" = "windows" ]; then
-            output_name="${output_name}.exe"
-          fi
-          # 构建Caddy并安装插件
-          xcaddy build \
-            --with github.com/caddyserver/caddy/v2 \
-            --with github.com/mholt/caddy-ratelimit \
-            --with github.com/lanrat/caddy-dynamic-remoteip \
-            --with github.com/greenpau/caddy-security \
-            --output $output_name
-
-      - name: Create ZIP archive
-        run: |
-          zip_name="caddy-${{ matrix.os }}-${{ matrix.arch }}.zip"
-          if [ "${{ matrix.os }}" = "windows" ]; then
-            zip $zip_name caddy-${{ matrix.os }}-${{ matrix.arch }}.exe
-          else
-            zip $zip_name caddy-${{ matrix.os }}-${{ matrix.arch }}
-          fi
-
-      - name: Generate SHA256 checksums
-        run: |
-          sha256sum "caddy-${{ matrix.os }}-${{ matrix.arch }}.zip" > "caddy-${{ matrix.os }}-${{ matrix.arch }}.zip.sha256"
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.event.inputs.version }}
-          name: "${{ github.event.inputs.version }}"
-          draft: false
-          prerelease: false
-          files: |
-            caddy-${{ matrix.os }}-${{ matrix.arch }}.zip
-            caddy-${{ matrix.os }}-${{ matrix.arch }}.zip.sha256
-          body: |
-            Custom Caddy build with:
-            - 增加IP限制模块
-            - 增加用户认证模块
-            - 增加访问速率模块
-
-            ## Supported platforms
-            - Linux (amd64, arm64)
-            - Windows (amd64)
-            - macOS (amd64, arm64)
-
-            ## SHA256 Checksums
-            See the attached .sha256 files for verification.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: 'stable'
+        
+    - name: Install xcaddy
+      run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+      
+    - name: 构建Caddy并安装插件
+      run: |
+        xcaddy build \
+          --with github.com/caddyserver/caddy/v2 \
+          --with github.com/mholt/caddy-ratelimit \
+          --with github.com/lanrat/caddy-dynamic-remoteip \
+          --with github.com/greenpau/caddy-security \
+          --with github.com/caddy-dns/cloudflare
+          
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ inputs.version }}
+        name: caddy ${{ inputs.version }}
+        files: caddy
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
