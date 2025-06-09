@@ -32,17 +32,14 @@ sudo apt install -y angie
 
 ### 常用命令
 ```
-# 测试配置文件语法
+# 检查配置文件语法
 sudo angie -t
-
-# 启动服务
-sudo systemctl start angie
-
-# 停止服务
-sudo systemctl stop angie
 
 # 重启服务
 sudo systemctl restart angie
+
+# 停止服务
+sudo systemctl stop angie
 
 # 重新加载配置（不中断连接）
 sudo systemctl reload angie
@@ -52,9 +49,6 @@ sudo systemctl status angie
 
 # 设置开机自启
 sudo systemctl enable angie
-
-# 禁用开机自启
-sudo systemctl disable angie
 
 # 查看系统日志
 sudo journalctl -u angie -f
