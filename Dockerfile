@@ -1,5 +1,6 @@
 FROM golang:1.21-alpine AS builder
 
+RUN apk add --no-cache git bash
 RUN go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 
 # 使用 xcaddy 构建 Caddy 并安装插件
