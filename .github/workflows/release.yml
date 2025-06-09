@@ -127,7 +127,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ inputs.version }}
-        name: Caddy 构建版本 ${{ inputs.version }}
+        name: caddy ${{ inputs.version }}
         body_path: release_notes.md
         files: |
           caddy-linux-amd64/caddy-linux-amd64
