@@ -1,10 +1,12 @@
-### Angie是nginx初代工程师开发维护的fork版本，拥有自动配置SSL证书的特性。
+### Angie是一个高效、强大且可扩展的网络服务器， 它是从 nginx 分叉而来的
+
+由nginx原项目的前开发者创建，以实现新的发展方向，并作为即插即用替代品，无需重写配置或模块。包含了`nginx` 1.27.4 的所有功能，并增加了许多新特性。例如像`caddy`那种自动配置证书等等。
 
 官方文档：https://cn.angie.software/angie/docs/
 
 官方仓库：https://github.com/webserver-llc/angie
 
-相关docker镜像：https://hub.docker.com/r/eilandert/angie/tags
+相关docker镜像(非官方)：https://hub.docker.com/r/eilandert/angie/tags
 
 ### 一键安装
 
