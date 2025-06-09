@@ -64,20 +64,17 @@ sudo journalctl -u angie -f
 默认目录结构
 ```
 /etc/angie/
-├── angie.conf              # 主配置文件
-├── mime.types              # MIME类型定义
-├── fastcgi_params          # FastCGI参数
-├── scgi_params             # SCGI参数
-├── uwsgi_params            # uWSGI参数
-├── conf.d/                 # 额外配置目录
-│   └── default.conf        # 默认虚拟主机配置
-├── sites-available/        # 可用站点配置
-│   └── default             # 默认站点配置
-├── sites-enabled/          # 启用站点配置（符号链接）
-│   └── default -> ../sites-available/default
-└── snippets/               # 配置片段
-    ├── fastcgi-php.conf
-    └── snakeoil.conf
+├── angie.conf                # 主配置文件
+├── mime.types                # MIME类型定义
+├── fastcgi_params            # FastCGI参数
+├── scgi_params               # SCGI参数
+├── uwsgi_params              # uWSGI参数
+├── http.d/                   # HTTP配置目录（虚拟主机、模块等）
+│   └── default.conf          # 默认HTTP配置文件
+├── stream.d/                 # 流式代理配置目录（如TCP/UDP）
+│   └── example.conf
+├── modules/                  # 模块目录（可空或放模块）
+├── prometheus_all.conf       # 监控配置
 ```
 
 ### SSL证书目录（ACME自动获取）
