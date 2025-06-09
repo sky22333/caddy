@@ -8,15 +8,10 @@ on:
         required: true
         type: string
       plugins:
-        description: '插件列表 (每行一个插件)'
+        description: '插件列表 (用英文逗号分隔)'
         required: true
         type: string
-        default: |
-          github.com/caddyserver/caddy/v2
-          github.com/mholt/caddy-ratelimit
-          github.com/lanrat/caddy-dynamic-remoteip
-          github.com/greenpau/caddy-security
-          github.com/caddy-dns/cloudflare
+        default: 'github.com/caddyserver/caddy/v2,github.com/mholt/caddy-ratelimit,github.com/lanrat/caddy-dynamic-remoteip,github.com/greenpau/caddy-security,github.com/caddy-dns/cloudflare'
 
 jobs:
   build:
@@ -53,11 +48,13 @@ jobs:
       run: |
         plugins="${{ inputs.plugins }}"
         with_args=""
-        while IFS= read -r line; do
-          if [ -n "$line" ] && [[ ! "$line" =~ ^[[:space:]]*$ ]]; then
-            with_args="$with_args --with $line"
+        IFS=',' read -ra PLUGIN_ARRAY <<< "$plugins"
+        for plugin in "${PLUGIN_ARRAY[@]}"; do
+          plugin=$(echo "$plugin" | xargs)  # 去除空格
+          if [ -n "$plugin" ]; then
+            with_args="$with_args --with $plugin"
           fi
-        done <<< "$plugins"
+        done
         echo "with_args=$with_args" >> $GITHUB_OUTPUT
         
     - name: 构建 Caddy (${{ matrix.suffix }})
@@ -109,11 +106,13 @@ jobs:
         echo "## 🚀 Caddy 自定义构建版本" > release_notes.md
         echo "" >> release_notes.md
         echo "### 📦 包含的插件:" >> release_notes.md
-        while IFS= read -r line; do
-          if [ -n "$line" ] && [[ ! "$line" =~ ^[[:space:]]*$ ]]; then
-            echo "- \`$line\`" >> release_notes.md
+        IFS=',' read -ra PLUGIN_ARRAY <<< "$plugins"
+        for plugin in "${PLUGIN_ARRAY[@]}"; do
+          plugin=$(echo "$plugin" | xargs)  # 去除空格
+          if [ -n "$plugin" ]; then
+            echo "- \`$plugin\`" >> release_notes.md
           fi
-        done <<< "$plugins"
+        done
         echo "" >> release_notes.md
         echo "### 💻 支持的架构:" >> release_notes.md
         echo "- Linux AMD64" >> release_notes.md
@@ -127,7 +126,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ inputs.version }}
-        name: caddy ${{ inputs.version }}
+        name: Caddy 构建版本 ${{ inputs.version }}
         body_path: release_notes.md
         files: |
           caddy-linux-amd64/caddy-linux-amd64
