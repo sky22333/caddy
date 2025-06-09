@@ -129,7 +129,7 @@ jobs:
         echo "- Windows AMD64" >> release_notes.md
         echo "" >> release_notes.md
         echo "### 📥 下载说明:" >> release_notes.md
-        echo "请根据您的系统架构选择对应的二进制文件下载。" >> release_notes.md
+        echo "请根据您的系统架构选择对应的二进制文件下载。下载的就是可直接执行的二进制文件。" >> release_notes.md
         
     - name: 创建发布版本
       uses: softprops/action-gh-release@v2
