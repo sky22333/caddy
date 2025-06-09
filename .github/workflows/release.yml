@@ -1,30 +1,42 @@
-name: Build Caddy with Plugins
+name: 构建 Caddy 插件版本
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., v1.0.0)'
+        description: '发布版本号 (例如: v1.0.0)'
         required: true
         type: string
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            suffix: linux-amd64
+          - goos: linux
+            goarch: arm64
+            suffix: linux-arm64
+          - goos: windows
+            goarch: amd64
+            suffix: windows-amd64.exe
     
     steps:
-    - name: Checkout
+    - name: 检出代码
       uses: actions/checkout@v4
       
-    - name: Setup Go
+    - name: 设置 Go 环境
       uses: actions/setup-go@v5
       with:
         go-version: 'stable'
         
-    - name: Install xcaddy
+    - name: 安装 xcaddy
       run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
       
-    - name: 构建Caddy并安装插件
+    - name: 构建 Caddy (${{ matrix.suffix }})
       run: |
         xcaddy build \
           --with github.com/caddyserver/caddy/v2 \
@@ -32,13 +44,40 @@ jobs:
           --with github.com/lanrat/caddy-dynamic-remoteip \
           --with github.com/greenpau/caddy-security \
           --with github.com/caddy-dns/cloudflare
-          
-    - name: Create Release
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+        
+    - name: 重命名文件
+      run: |
+        if [ "${{ matrix.goos }}" = "windows" ]; then
+          mv caddy caddy-${{ matrix.suffix }}
+        else
+          mv caddy caddy-${{ matrix.suffix }}
+        fi
+        
+    - name: 上传构建产物
+      uses: actions/upload-artifact@v4
+      with:
+        name: caddy-${{ matrix.suffix }}
+        path: caddy-${{ matrix.suffix }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: 下载所有构建产物
+      uses: actions/download-artifact@v4
+      
+    - name: 创建发布版本
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ inputs.version }}
         name: caddy ${{ inputs.version }}
-        files: caddy
+        files: |
+          caddy-linux-amd64/caddy-linux-amd64
+          caddy-linux-arm64/caddy-linux-arm64
+          caddy-windows-amd64.exe/caddy-windows-amd64.exe
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
