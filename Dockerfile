@@ -13,7 +13,7 @@ RUN xcaddy build \
 
 FROM alpine
 
-RUN apk add --no-cache libc6-compat curl
+RUN apk add --no-cache libc6-compat curl ca-certificates
 
 COPY --from=builder /app/caddy /usr/bin/caddy
 
