@@ -92,11 +92,8 @@ jobs:
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
       with:
-        name: release-binaries
-        path: |
-          caddy-linux-amd64
-          caddy-linux-arm64
-          caddy-windows-amd64.exe
+        name: caddy-${{ matrix.suffix }}
+        path: caddy-${{ matrix.suffix }}${{ matrix.ext || '' }}
 
   release:
     needs: build
@@ -105,9 +102,15 @@ jobs:
     - name: 下载所有构建产物
       uses: actions/download-artifact@v4
       with:
-        name: release-binaries
+        pattern: caddy-*
+        merge-multiple: true
         path: .
       
+    - name: 验证下载的文件
+      run: |
+        echo "下载的文件列表:"
+        ls -la
+        
     - name: 准备发布说明
       id: release_notes
       run: |
