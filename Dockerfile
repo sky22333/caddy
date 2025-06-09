@@ -1,6 +1,6 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:1.24-bookworm AS builder
 
-RUN apk add --no-cache git bash
+RUN apt update && apt install -y git
 RUN go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 
 # 使用 xcaddy 构建 Caddy 并安装插件
