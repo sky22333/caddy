@@ -82,10 +82,11 @@ sudo journalctl -u angie -f
 
 ### SSL证书目录（ACME自动获取）
 ```
-/etc/ssl/angie/             # 证书存储目录
-├── cert.pem
-├── private.key
-└── chain.pem
+/var/lib/angie/acme/             # 证书存储目录
+└── letsencrypt/
+    ├── cert.pem
+    ├── private.key
+    └── chain.pem
 ```
 
 ### 完全卸载
