@@ -100,11 +100,11 @@ Caddy 证书存储路径  `/var/lib/caddy/.local/share/caddy/certificates/acme-v
 ```
 example.com {
     encode zstd gzip
-    reverse_proxy localhost:8080
+    reverse_proxy 127.0.0.1:8080
 }
 ```
 
-#### 反代并获取CF后端真实IP
+#### 反代Docker并获取访客真实IP
 ```
 example.com {
     reverse_proxy {
@@ -112,7 +112,17 @@ example.com {
         header_up X-Real-IP {remote}
         header_up X-Forwarded-For {remote}
         header_up X-Forwarded-Proto {scheme}
-        header_up CF-Connecting-IP {remote}
+    }
+}
+```
+cloudflare CDN：
+```
+example.com {
+    reverse_proxy 127.0.0.1:8080 {
+        header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+        header_up X-Real-IP {http.request.header.CF-Connecting-IP}
+        header_up X-Forwarded-Proto https
+        header_up X-Forwarded-Host {host}
     }
 }
 ```
