@@ -32,13 +32,6 @@
         .container {
             text-align: center;
             color: white;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
         }
 
         h3 {
@@ -147,9 +140,9 @@
                     }
                 }
 
-                statusElement.textContent = '暂时无法找到可用线路，工程师正在修复中';
+                statusElement.textContent = '暂时无法找到可用线路，请等待修复';
             } catch (error) {
-                statusElement.textContent = '检测过程出错，工程师正在修复中';
+                statusElement.textContent = '检测过程出错，请等待修复';
             }
         }
 
