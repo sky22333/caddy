@@ -1,154 +1,27 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>跳转页</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .container {
-            text-align: center;
-            color: white;
-        }
-
-        h3 {
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .loading-circle {
-            width: 120px;
-            height: 120px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
-            border-radius: 50%;
-            margin: 20px auto;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        #status {
-            font-size: 1.5em;
-            margin-top: 2rem;
-            min-height: 60px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        @media (max-width: 768px) {
-            h3 {
-                font-size: 1.5rem;
-            }
-
-            #status {
-                font-size: 1.2em;
-            }
-        }
-
-        .pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .7; }
-        }
-    </style>
+  <!-- 预连接 -->
+  <link rel="preconnect" href="https://ipinfo.io" crossorigin>
+  <!-- DNS预解析 -->
+  <link rel="dns-prefetch" href="https://www.bilibili.com">
+  <link rel="dns-prefetch" href="https://www.bing.com">
+  <script>
+    function getIPInfo() {
+      fetch('https://ipinfo.io/json')
+       .then(response => response.json())
+       .then(data => {
+          // 根据国家代码跳转：CN -> B站，其他 -> Bing
+          if (data.country === 'CN') {
+            window.location.href = 'https://www.bilibili.com';
+          } else {
+            window.location.href = 'https://www.bing.com';
+          }
+        })
+       .catch(error => console.error('无法获取位置:', error));
+    }
+  </script>
 </head>
-<body>
-    <div class="container">
-        <h3>正在自动选择最快线路</h3>
-        <div class="loading-circle"></div>
-        <div id="status" class="pulse">正在跳转最快线路...</div>
-    </div>
-
-    <script>
-        // Base64域名数组
-        const encryptedDomains = [
-            "aHR0cHM6Ly93d3cueW91dHViZS5jb20=",
-            "aHR0cHM6Ly9naXRodWIuY29t",
-            "aHR0cHM6Ly93d3cuYmFpZHUuY29t",
-            "aHR0cHM6Ly93d3cuYmFpZHUuY29t"
-        ];
-
-        function initializePage() {
-            findFirstAvailableDomain();
-        }
-
-        async function checkDomain(url) {
-            const statusElement = document.getElementById('status');
-            statusElement.textContent = `自动跳转中`;
-
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000);
-
-                const response = await fetch(url, {
-                    mode: 'no-cors',
-                    cache: 'no-cache',
-                    signal: controller.signal
-                });
-
-                clearTimeout(timeoutId);
-                return true;
-            } catch (error) {
-                return false;
-            }
-        }
-
-        async function findFirstAvailableDomain() {
-            const statusElement = document.getElementById('status');
-
-            try {
-                for (const encryptedUrl of encryptedDomains) {
-                    const domainUrl = atob(encryptedUrl);
-                    const isAvailable = await checkDomain(domainUrl);
-
-                    if (isAvailable) {
-                        statusElement.textContent = `🎉已找到最快线路，正在跳转...`;
-                        setTimeout(() => {
-                            window.location.href = domainUrl;
-                        }, 1000);
-                        return;
-                    }
-                }
-
-                statusElement.textContent = '暂时无法找到可用线路，请等待修复';
-            } catch (error) {
-                statusElement.textContent = '检测过程出错，请等待修复';
-            }
-        }
-
-        window.onload = () => {
-            initializePage();
-        };
-    </script>
+<body onload="getIPInfo()">
 </body>
 </html>
