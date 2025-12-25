@@ -1,0 +1,10 @@
+{
+    servers {
+        protocols h1 h2
+    }
+}
+
+example.com {
+    encode zstd gzip
+    reverse_proxy localhost:8080
+}
