@@ -1,7 +1,7 @@
 # DNS申请证书需要编译DNS插件
 # 需要2.10版本以上支持
 # 如果需要重新部署则需要删除/root/.local/share/caddy锁文件
-# ech这里要使用公共域名，所以无需修改
+# ech这里使用任意二级域名，并且解析到你的IP
 {
 	dns cloudflare xxxxxxxxxxxxxxxxxxxxx
 	ech ech.example.com
