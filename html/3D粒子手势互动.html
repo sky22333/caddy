@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D 手势交互粒子系统</title>
+    
+    <!-- Libs -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: #000;
+            font-family: 'Inter', sans-serif;
+            color: #e5e7eb;
+        }
+        
+        /* Video */
+        .video_container {
+            position: absolute;
+            inset: 0;
+            z-index: 0; 
+            display: none;
+        }
+        .input_video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        /* Canvas */
+        #canvas-container {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        /* UI */
+        .glass-panel {
+            background: rgba(45, 45, 60, 0.7); 
+            backdrop-filter: blur(25px) saturate(150%);
+            -webkit-backdrop-filter: blur(25px) saturate(150%);
+            border: 1px solid rgba(170, 180, 255, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .btn-interactive {
+            transition: all 0.2s;
+            border-radius: 0.5rem;
+            border: 1px solid transparent;
+        }
+        .btn-interactive:hover {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+            border-color: #3b82f6;
+        }
+        
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Video Layer -->
+    <div id="video-container" class="video_container">
+        <video class="input_video"></video>
+    </div>
+
+    <!-- BG Layer -->
+    <div id="image-background" class="absolute inset-0 z-0 bg-cover bg-center" style="display: none;"></div>
+
+    <!-- 3D Layer -->
+    <div id="canvas-container"></div>
+
+    <!-- Show Btn -->
+    <button id="show-panel-btn" onclick="toggleConsole()" class="absolute top-4 right-4 z-10 glass-panel p-2 rounded-full text-white hover:bg-gray-700/50 hidden transition-all hover:scale-110 active:scale-95" title="显示控制台">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+    </button>
+
+    <!-- Control Panel -->
+    <div id="control-panel" class="absolute top-4 right-4 z-20 w-72 glass-panel rounded-xl p-4 text-white max-h-[90vh] overflow-y-auto no-scrollbar transform transition-transform duration-300">
+        <div class="flex items-center justify-between mb-3">
+            <h1 class="text-lg font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-indigo-400">
+                ✨ 粒子控制
+            </h1>
+            <div class="flex items-center space-x-2">
+                <div id="status-indicator" class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_red]"></div>
+                <!-- Fullscreen -->
+                <button onclick="toggleFullScreen()" class="hover:text-blue-400 transition-colors p-1.5 rounded hover:bg-white/10" title="全屏">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 4l-5-5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                    </svg>
+                </button>
+                <!-- Hide -->
+                <button onclick="toggleConsole()" class="hover:text-red-400 transition-colors p-1.5 rounded hover:bg-white/10" title="隐藏">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading-msg" class="flex items-center space-x-2 text-xs text-gray-400 mb-3 p-2 bg-black/30 rounded-lg">
+            <div class="loader" style="width: 16px; height: 16px; border-width: 2px;"></div>
+            <span>启动 AI 模型...</span>
+        </div>
+
+        <!-- Status -->
+        <div class="space-y-2 mb-4">
+            <div class="bg-gray-800/60 p-2 rounded-lg border border-gray-700/50">
+                <div class="flex justify-between text-xs text-gray-300">
+                    <span class="font-semibold">手势:</span>
+                    <span id="gesture-state" class="text-yellow-300 font-bold">等待...</span>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800/60 p-2 rounded-lg border border-gray-700/50 text-xs space-y-1">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">背景:</span>
+                    <span id="bg-mode-name" class="text-blue-300 font-mono">摄像头</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">颜色:</span>
+                    <span id="color-name" class="text-purple-300 font-mono">Ocean Blue</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">形状:</span>
+                    <span id="shape-name" class="text-green-300 font-mono">Heart</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">锁定:</span>
+                    <span id="lock-state" class="text-red-400 font-mono">未锁定</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Shape -->
+        <div class="p-2.5 bg-gray-800/50 rounded-lg border border-gray-700/50 mb-3">
+            <h3 class="text-xs font-semibold text-gray-300 mb-2">💎 形状</h3>
+            <div class="grid grid-cols-3 gap-1.5">
+                <button onclick="setShapeByName('heart')" class="btn-interactive p-1.5 text-xs bg-red-600/30 hover:bg-red-600/50">❤️ 心形</button>
+                <button onclick="setShapeByName('sphere')" class="btn-interactive p-1.5 text-xs bg-yellow-600/30 hover:bg-yellow-600/50">🌐 球体</button>
+                <button onclick="setShapeByName('saturn')" class="btn-interactive p-1.5 text-xs bg-purple-600/30 hover:bg-purple-600/50">🪐 土星</button>
+                <button onclick="setShapeByName('flower')" class="btn-interactive p-1.5 text-xs bg-pink-600/30 hover:bg-pink-600/50">🌸 花形</button>
+                <button onclick="setShapeByName('buddha')" class="btn-interactive p-1.5 text-xs bg-lime-600/30 hover:bg-lime-600/50">🧘 佛陀</button>
+                <button onclick="setShapeByName('fireworks')" class="btn-interactive p-1.5 text-xs bg-sky-600/30 hover:bg-sky-600/50">🎆 烟花</button>
+            </div>
+        </div>
+        
+        <!-- BG Mode -->
+        <div class="p-2.5 bg-gray-800/50 rounded-lg border border-gray-700/50 mb-3">
+            <h3 class="text-xs font-semibold text-gray-300 mb-2">🌌 背景</h3>
+            <div class="grid grid-cols-3 gap-1.5">
+                <button onclick="setBackgroundMode('camera')" class="btn-interactive p-1.5 text-xs bg-teal-600/30 hover:bg-teal-600/50">🎥 摄像头</button>
+                <button onclick="setBackgroundMode('black')" class="btn-interactive p-1.5 text-xs bg-gray-600/30 hover:bg-gray-600/50">⚫ 纯黑</button>
+                <label class="btn-interactive p-1.5 text-xs bg-indigo-600/30 hover:bg-indigo-600/50 text-center cursor-pointer flex items-center justify-center">
+                    🖼️ 上传
+                    <input type="file" id="image-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                </label>
+            </div>
+        </div>
+
+        <!-- Guide -->
+        <div class="p-2.5 bg-blue-900/40 rounded-lg border border-blue-700/50">
+            <h3 class="text-xs font-semibold text-blue-300 mb-2">🌟 指南</h3>
+            <ul class="text-xs text-gray-300 list-disc list-inside space-y-1 leading-tight">
+                <li><span class="font-bold">🖐️ 张/握:</span> 扩散/凝聚</li>
+                <li><span class="font-bold">👉+🤏:</span> 换颜色 (食指)</li>
+                <li><span class="font-bold">🖕+🤏:</span> 换形状 (中指)</li>
+                <li><span class="font-bold">✌️ V字:</span> 重置</li>
+                <li><span class="font-bold">👌 O环:</span> 锁定</li>
+                <li><span class="font-bold">↔️ 移动:</span> 旋转</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay-guide" class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/90 transition-opacity duration-1000">
+        <h2 class="text-4xl font-extrabold text-white mb-4">请将手置于摄像头前</h2>
+        <p class="text-lg text-blue-400">等待 AI 初始化, 尝试 V 字手势 ✌️</p>
+    </div>
+
+<script>
+// Config
+const CONFIG = {
+    particleCount: 20000,
+    baseSize: 0.15,
+    cameraZ: 60,
+    pinchThreshold: 0.05, 
+};
+
+const SHAPES = ['heart', 'sphere', 'saturn', 'flower', 'buddha', 'fireworks'];
+let currentShapeIndex = 0;
+
+const COLOR_PALETTES = [
+    { name: "Ocean Blue", baseColor: 0x00aaff, variance: 0.2 },
+    { name: "Neon Pink", baseColor: 0xff00ff, variance: 0.2 },
+    { name: "Solar Flare", baseColor: 0xffcc00, variance: 0.3 },
+    { name: "Deep Forest", baseColor: 0x00cc00, variance: 0.2 },
+    { name: "Rainbow Burst", baseColor: 0xffffff, variance: 0.8 },
+];
+let currentColorIndex = 0;
+
+// Globals
+let scene, camera, renderer, particleSystem;
+let targetPositions = []; 
+let clock = new THREE.Clock();
+let particleColors = new Float32Array(CONFIG.particleCount * 3); 
+let isRotationLocked = false;
+let backgroundMode = 'camera';
+
+let handInteraction = {
+    detected: false, openness: 0, scale: 1,
+    centerX: 0.5, centerY: 0.5, centerZ: 0.5,
+    pinchIndex: false, pinchMiddle: false,
+    isVsign: false, isOKsign: false, 
+    lastPinchIndexTime: 0, lastPinchMiddleTime: 0,
+    lastVsignTime: 0, lastOKsignTime: 0,
+};
+
+// UI Functions
+function toggleConsole() {
+    const panel = document.getElementById('control-panel');
+    const showBtn = document.getElementById('show-panel-btn');
+    
+    if (panel.style.transform === 'translateX(120%)') {
+        panel.style.transform = 'translateX(0)';
+        panel.style.opacity = '1';
+        panel.style.pointerEvents = 'auto';
+        showBtn.classList.add('hidden');
+    } else {
+        panel.style.transform = 'translateX(120%)';
+        panel.style.opacity = '0';
+        panel.style.pointerEvents = 'none';
+        showBtn.classList.remove('hidden');
+    }
+}
+
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.warn(`Fullscreen error: ${err.message}`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+// Three.js Init
+function initThree() {
+    const container = document.getElementById('canvas-container');
+    
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = CONFIG.cameraZ;
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setClearColor(0x000000, 0); 
+    container.appendChild(renderer.domElement);
+
+    createParticles();
+    generateShape(SHAPES[currentShapeIndex]);
+    applyCurrentColorPalette();
+    updateBackground(backgroundMode);
+
+    window.addEventListener('resize', onWindowResize, false);
+    animate();
+}
+
+// Particles
+function createParticles() {
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(CONFIG.particleCount * 3);
+    
+    for (let i = 0; i < CONFIG.particleCount; i++) {
+        const r = 50 * Math.cbrt(Math.random());
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = r * Math.cos(phi);
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
+
+    const material = new THREE.PointsMaterial({
+        size: CONFIG.baseSize,
+        vertexColors: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        transparent: true,
+        opacity: 0.9,
+        sizeAttenuation: true
+    });
+
+    particleSystem = new THREE.Points(geometry, material);
+    scene.add(particleSystem);
+}
+
+// Colors
+function applyCurrentColorPalette() {
+    const palette = COLOR_PALETTES[currentColorIndex];
+    const baseColor = new THREE.Color(palette.baseColor);
+    const colors = particleSystem.geometry.attributes.color.array;
+    
+    let minZ = Infinity, maxZ = -Infinity;
+    for (let i = 2; i < targetPositions.length; i += 3) {
+        if (targetPositions[i] < minZ) minZ = targetPositions[i];
+        if (targetPositions[i] > maxZ) maxZ = targetPositions[i];
+    }
+    const rangeZ = maxZ - minZ + 0.001;
+
+    for (let i = 0; i < CONFIG.particleCount; i++) {
+        const idx = i * 3;
+        const normalizedZ = (targetPositions[idx + 2] - minZ) / rangeZ; 
+        
+        const mixedColor = new THREE.Color();
+        if (palette.baseColor === 0xffffff) {
+            mixedColor.setHSL(normalizedZ * 0.8 + Math.random() * 0.1, 1.0, 0.6);
+        } else {
+            const variance = (Math.random() - 0.5) * palette.variance;
+            mixedColor.setRGB(
+                baseColor.r * (1 - normalizedZ * 0.3) + variance,
+                baseColor.g * (1 - normalizedZ * 0.3) + variance,
+                baseColor.b * (1 - normalizedZ * 0.3) + variance
+            );
+        }
+
+        colors[idx] = mixedColor.r;
+        colors[idx + 1] = mixedColor.g;
+        colors[idx + 2] = mixedColor.b;
+        particleColors[idx] = mixedColor.r;
+        particleColors[idx + 1] = mixedColor.g;
+        particleColors[idx + 2] = mixedColor.b;
+    }
+    
+    particleSystem.geometry.attributes.color.needsUpdate = true;
+    
+    const el = document.getElementById('color-name');
+    if (el) el.innerText = COLOR_PALETTES[currentColorIndex].name;
+}
+
+// Shapes
+function generateShape(type) {
+    const newPositions = new Float32Array(CONFIG.particleCount * 3);
+    
+    for (let i = 0; i < CONFIG.particleCount; i++) {
+        let x, y, z;
+        const idx = i * 3;
+
+        if (type === 'heart') {
+            const t = Math.random() * Math.PI * 2;
+            const r = 1 + Math.random() * 0.5;
+            x = r * 16 * Math.pow(Math.sin(t), 3) * 1.2;
+            y = r * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * 1.2 + 5;
+            z = (Math.random() - 0.5) * 10;
+        } else if (type === 'sphere') {
+            const r = 20 * Math.cbrt(Math.random()); 
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            x = r * Math.sin(phi) * Math.cos(theta);
+            y = r * Math.sin(phi) * Math.sin(theta);
+            z = r * Math.cos(phi);
+        } else if (type === 'saturn') {
+            const rand = Math.random();
+            if (rand < 0.6) {
+                const r = 10 * Math.cbrt(Math.random()); 
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                x = r * Math.sin(phi) * Math.cos(theta);
+                y = r * Math.sin(phi) * Math.sin(theta);
+                z = r * Math.cos(phi);
+            } else {
+                const r = 14 + Math.random() * 10;
+                const theta = Math.random() * Math.PI * 2;
+                x = r * Math.cos(theta);
+                z = r * Math.sin(theta);
+                y = (Math.random() - 0.5) * 1; 
+                const tilt = Math.PI / 6;
+                const _y = y * Math.cos(tilt) - z * Math.sin(tilt);
+                const _z = y * Math.sin(tilt) + z * Math.cos(tilt);
+                y = _y; z = _z;
+            }
+        } else if (type === 'flower') {
+            const rBase = 15;
+            const u = Math.random() * Math.PI * 2;
+            const v = Math.random() * Math.PI;
+            const r = rBase + 5 * Math.sin(5 * u) * Math.sin(v);
+            x = r * Math.sin(v) * Math.cos(u);
+            y = r * Math.sin(v) * Math.sin(u);
+            z = r * Math.cos(v) * 0.5;
+        } else if (type === 'buddha') {
+            const rand = Math.random();
+            if (rand < 0.4) { 
+                const r = 9 * Math.cbrt(Math.random());
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                x = r * Math.sin(phi) * Math.cos(theta);
+                y = r * Math.sin(phi) * Math.sin(theta) - 5;
+                z = r * Math.cos(phi) * 0.8;
+            } else if (rand < 0.6) { 
+                const r = 5 * Math.cbrt(Math.random());
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                x = r * Math.sin(phi) * Math.cos(theta);
+                y = r * Math.sin(phi) * Math.sin(theta) + 7;
+                z = r * Math.cos(phi);
+            } else { 
+                const r = 12 * Math.sqrt(Math.random());
+                const theta = Math.random() * Math.PI * 2;
+                x = r * Math.cos(theta);
+                z = r * Math.sin(theta);
+                y = (Math.random() - 0.5) * 3 - 12;
+            }
+        } else if (type === 'fireworks') {
+            const r = 40 * Math.random();
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            x = r * Math.sin(phi) * Math.cos(theta);
+            y = r * Math.sin(phi) * Math.sin(theta);
+            z = r * Math.cos(phi);
+        }
+
+        newPositions[idx] = x;
+        newPositions[idx + 1] = y;
+        newPositions[idx + 2] = z;
+    }
+    
+    targetPositions = newPositions;
+    
+    const el = document.getElementById('shape-name');
+    if (el) {
+        let displayName = type.charAt(0).toUpperCase() + type.slice(1);
+        const map = {'heart':'心形','sphere':'球体','saturn':'土星','flower':'花形','buddha':'佛陀','fireworks':'烟花'};
+        if(map[type]) displayName = map[type];
+        el.innerText = displayName;
+    }
+    
+    applyCurrentColorPalette(); 
+}
+
+// Animation
+function animate() {
+    requestAnimationFrame(animate);
+
+    const time = clock.getElapsedTime();
+    const lerpFactor = 0.15; 
+
+    // Rotation
+    if (handInteraction.detected && !isRotationLocked) {
+        const targetRotY = (handInteraction.centerX - 0.5) * 8.0; 
+        const targetRotX = (handInteraction.centerY - 0.5) * 8.0; 
+        
+        particleSystem.rotation.y = THREE.MathUtils.lerp(particleSystem.rotation.y, targetRotY, lerpFactor);
+        particleSystem.rotation.x = THREE.MathUtils.lerp(particleSystem.rotation.x, targetRotX, lerpFactor);
+        
+        const targetPosZ = (handInteraction.centerZ - 0.5) * 50; 
+        particleSystem.position.z = THREE.MathUtils.lerp(particleSystem.position.z, targetPosZ, lerpFactor);
+
+    } else if (!handInteraction.detected) {
+        particleSystem.rotation.y += 0.002;
+        particleSystem.rotation.x = THREE.MathUtils.lerp(particleSystem.rotation.x, 0, 0.05);
+        particleSystem.position.z = THREE.MathUtils.lerp(particleSystem.position.z, 0, 0.05);
+    }
+    
+    const lockEl = document.getElementById('lock-state');
+    if (lockEl) lockEl.innerText = isRotationLocked ? '已锁定' : '未锁定';
+
+    // Positions
+    const positions = particleSystem.geometry.attributes.position.array;
+    const openness = handInteraction.openness;
+    const lerpSpeed = 0.08; 
+    const dispersionFactor = openness * 40; 
+    
+    for (let i = 0; i < CONFIG.particleCount; i++) {
+        const idx = i * 3;
+        
+        let tx = targetPositions[idx];
+        let ty = targetPositions[idx + 1];
+        let tz = targetPositions[idx + 2];
+
+        if (openness > 0.05) { 
+            const dist = Math.sqrt(tx*tx + ty*ty + tz*tz) + 0.001;
+            const pulse = Math.sin(time * 3 + dist * 0.1) * (openness * 2);
+            tx += (tx / dist) * (dispersionFactor + pulse);
+            ty += (ty / dist) * (dispersionFactor + pulse);
+            tz += (tz / dist) * (dispersionFactor + pulse);
+        }
+
+        positions[idx] += (tx - positions[idx]) * lerpSpeed;
+        positions[idx + 1] += (ty - positions[idx + 1]) * lerpSpeed;
+        positions[idx + 2] += (tz - positions[idx + 2]) * lerpSpeed;
+    }
+
+    particleSystem.geometry.attributes.position.needsUpdate = true;
+    
+    // Scale
+    particleSystem.scale.setScalar(THREE.MathUtils.lerp(particleSystem.scale.x, handInteraction.scale, 0.1));
+
+    renderer.render(scene, camera);
+}
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// Background
+function setBackgroundMode(mode) {
+    backgroundMode = mode;
+    updateBackground(mode);
+}
+
+function updateBackground(mode) {
+    const videoContainer = document.getElementById('video-container');
+    const imageBackground = document.getElementById('image-background');
+    const bgModeNameElement = document.getElementById('bg-mode-name');
+    
+    videoContainer.style.display = 'none';
+    imageBackground.style.display = 'none';
+    imageBackground.style.backgroundImage = 'none';
+
+    if (renderer) renderer.setClearColor(0x000000, 0);
+    
+    if (mode === 'camera') {
+        videoContainer.style.display = 'block';
+        if (bgModeNameElement) bgModeNameElement.innerText = '🎥 摄像头';
+    } else if (mode === 'black') {
+        if (renderer) renderer.setClearColor(0x000000, 1);
+        if (bgModeNameElement) bgModeNameElement.innerText = '⚫ 纯黑';
+    } else if (mode === 'image') {
+        imageBackground.style.display = 'block';
+        if (bgModeNameElement) bgModeNameElement.innerText = '🖼️ 图片';
+    }
+}
+
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('image-background').style.backgroundImage = `url('${e.target.result}')`;
+            setBackgroundMode('image');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// MediaPipe
+function initMediaPipe() {
+    const videoElement = document.querySelector('.input_video');
+    
+    const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+    hands.setOptions({
+        maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75
+    });
+    hands.onResults(onHandsResults);
+
+    const cameraUtils = new Camera(videoElement, {
+        onFrame: async () => await hands.send({image: videoElement}),
+        width: 640, height: 480
+    });
+    
+    cameraUtils.start().then(() => {
+        const loadingMsg = document.getElementById('loading-msg');
+        const overlay = document.getElementById('overlay-guide');
+        if (loadingMsg) loadingMsg.style.display = 'none';
+        if (overlay) { overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none'; }
+    }).catch(err => {
+        console.error("Camera Error:", err);
+        const loadingMsg = document.getElementById('loading-msg');
+        if (loadingMsg) loadingMsg.innerHTML = "<span class='text-red-400'>❌ 摄像头失败</span>";
+        setBackgroundMode('black');
+    });
+}
+
+function distance(p1, p2) {
+    return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2));
+}
+
+function isFingerStraight(hand, tipIdx, pipIdx) {
+    return hand[tipIdx].y < hand[pipIdx].y; 
+}
+
+function checkVSign(hand) {
+    return isFingerStraight(hand, 8, 7) && isFingerStraight(hand, 12, 11) && hand[16].y > hand[15].y && hand[20].y > hand[19].y;
+}
+
+function checkOKSign(hand) {
+    const pinchDist = distance(hand[4], hand[8]); 
+    return pinchDist < CONFIG.pinchThreshold * 1.5 && isFingerStraight(hand, 16, 15) && isFingerStraight(hand, 12, 11) && isFingerStraight(hand, 20, 19);
+}
+
+function onHandsResults(results) {
+    const now = performance.now();
+    const statusIndicator = document.getElementById('status-indicator');
+    const gestureState = document.getElementById('gesture-state');
+
+    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        handInteraction.detected = true;
+        if (statusIndicator) statusIndicator.className = "w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_lime]";
+        
+        const hand = results.multiHandLandmarks[0];
+        handInteraction.centerX = hand[9].x; 
+        handInteraction.centerY = hand[9].y;
+        handInteraction.centerZ = Math.max(0.1, Math.min(0.9, hand[0].z));
+
+        // Logic
+        const isCurrentVSign = checkVSign(hand);
+        if (isCurrentVSign && !handInteraction.isVsign) {
+            if (now - handInteraction.lastVsignTime > 1000) { resetView(); handInteraction.lastVsignTime = now; }
+            handInteraction.isVsign = true;
+        } else if (!isCurrentVSign) handInteraction.isVsign = false;
+
+        const isCurrentOKSign = checkOKSign(hand);
+        if (isCurrentOKSign && !handInteraction.isOKsign) {
+            if (now - handInteraction.lastOKsignTime > 1000) { isRotationLocked = !isRotationLocked; handInteraction.lastOKsignTime = now; }
+            handInteraction.isOKsign = true;
+        } else if (!isCurrentOKSign) handInteraction.isOKsign = false;
+
+        const thumbTip = hand[4];
+        const indexPinchDist = distance(thumbTip, hand[8]); 
+        if (indexPinchDist < CONFIG.pinchThreshold && !handInteraction.pinchIndex && !handInteraction.isOKsign) {
+            if (now - handInteraction.lastPinchIndexTime > 500) { changeColor(true); handInteraction.lastPinchIndexTime = now; }
+            handInteraction.pinchIndex = true;
+        } else if (indexPinchDist >= CONFIG.pinchThreshold) handInteraction.pinchIndex = false;
+
+        const middlePinchDist = distance(thumbTip, hand[12]); 
+        if (middlePinchDist < CONFIG.pinchThreshold && !handInteraction.pinchMiddle && !handInteraction.isOKsign) {
+            if (now - handInteraction.lastPinchMiddleTime > 500) { setShape(true); handInteraction.lastPinchMiddleTime = now; }
+            handInteraction.pinchMiddle = true;
+        } else if (middlePinchDist >= CONFIG.pinchThreshold) handInteraction.pinchMiddle = false;
+
+        // Open/Close
+        const wristToPalm = distance(hand[0], hand[9]); 
+        const tipsDist = distance(hand[8], hand[20]); 
+        let openRatio = tipsDist / (wristToPalm * 3.0); 
+        handInteraction.openness = THREE.MathUtils.lerp(handInteraction.openness, Math.max(0, Math.min(1, openRatio)), 0.2);
+
+        // Two Hands
+        if (results.multiHandLandmarks.length === 2) {
+            const h1 = results.multiHandLandmarks[0][0]; 
+            const h2 = results.multiHandLandmarks[1][0]; 
+            handInteraction.scale = Math.max(0.5, Math.min(4.0, (distance(h1, h2) - 0.2) * 4 + 0.5));
+            if (gestureState) gestureState.innerText = "双手缩放";
+        } else {
+            handInteraction.scale = 1.0; 
+            if (gestureState) {
+                if (handInteraction.isVsign) gestureState.innerText = "✌️ V 字重置";
+                else if (handInteraction.isOKsign) gestureState.innerText = "👌 O 环锁定";
+                else if (handInteraction.pinchIndex) gestureState.innerText = "👉+🤏 换色";
+                else if (handInteraction.pinchMiddle) gestureState.innerText = "🖕+🤏 换形";
+                else if (openRatio > 0.7) gestureState.innerText = "🖐️ 张开扩散";
+                else if (openRatio < 0.3) gestureState.innerText = "✊ 握拳凝聚";
+                else gestureState.innerText = "↔️ 移动交互";
+            }
+        }
+    } else {
+        handInteraction.detected = false;
+        handInteraction.openness = THREE.MathUtils.lerp(handInteraction.openness, 0, 0.1); 
+        handInteraction.scale = THREE.MathUtils.lerp(handInteraction.scale, 1, 0.1);
+        if (statusIndicator) statusIndicator.className = "w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_red]";
+        if (gestureState) gestureState.innerText = "未检测到手";
+    }
+}
+
+function setShape(next = false) {
+    if (next) currentShapeIndex = (currentShapeIndex + 1) % SHAPES.length;
+    generateShape(SHAPES[currentShapeIndex]);
+}
+
+function setShapeByName(name) {
+    const index = SHAPES.indexOf(name);
+    if (index !== -1) {
+        currentShapeIndex = index;
+        generateShape(SHAPES[currentShapeIndex]);
+    }
+}
+
+function changeColor(next = false) {
+    if (next) currentColorIndex = (currentColorIndex + 1) % COLOR_PALETTES.length;
+    applyCurrentColorPalette();
+}
+
+function resetView() {
+    particleSystem.rotation.x = THREE.MathUtils.lerp(particleSystem.rotation.x, 0, 1);
+    particleSystem.rotation.y = THREE.MathUtils.lerp(particleSystem.rotation.y, 0, 1);
+    particleSystem.position.z = THREE.MathUtils.lerp(particleSystem.position.z, 0, 1);
+    handInteraction.scale = 1.0; 
+}
+
+initThree();
+setTimeout(initMediaPipe, 1000);
+</script>
+</body>
+</html>
