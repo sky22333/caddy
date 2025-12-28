@@ -6,12 +6,12 @@
     <title>3D 手势交互粒子系统</title>
     
     <!-- Libs -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://registry.npmmirror.com/tailwindcss-cdn/3.4.10/files/tailwindcss.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdmirror.com/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdmirror.com/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdmirror.com/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdmirror.com/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 
     <style>
         body { 
@@ -577,7 +577,7 @@ function handleImageUpload(event) {
 function initMediaPipe() {
     const videoElement = document.querySelector('.input_video');
     
-    const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+    const hands = new Hands({locateFile: (file) => `https://cdn.jsdmirror.com/npm/@mediapipe/hands/${file}`});
     hands.setOptions({
         maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75
     });
