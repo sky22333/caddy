@@ -1,0 +1,11 @@
+{
+    servers {
+        protocols h1 h2
+    }
+}
+example.com {
+    reverse_proxy https://fastly.jsdelivr.net {
+        header_up Host {upstream_hostport}
+        flush_interval -1
+    }
+}
