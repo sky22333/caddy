@@ -14,7 +14,7 @@
         body {
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background: linear-gradient(-45deg, #7cee52, #3cc5e7, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
             color: #333;
@@ -102,46 +102,57 @@
             findFirstAvailableDomain();
         }
 
-        async function checkDomain(url) {
-            const statusElement = document.getElementById('status');
-            statusElement.textContent = `自动跳转中`;
-
+        async function checkDomainWithStatus(url, index) {
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
 
                 const response = await fetch(url, {
+                    method: 'HEAD',
                     mode: 'no-cors',
                     cache: 'no-cache',
                     signal: controller.signal
                 });
 
                 clearTimeout(timeoutId);
-                return true;
+                return { success: true, url, index };
             } catch (error) {
-                return false;
+                return { success: false, url, index };
             }
         }
 
         async function findFirstAvailableDomain() {
             const statusElement = document.getElementById('status');
+            statusElement.textContent = '自动跳转中';
 
             try {
-                for (const encryptedUrl of encryptedDomains) {
-                    const domainUrl = atob(encryptedUrl);
-                    const isAvailable = await checkDomain(domainUrl);
-
-                    if (isAvailable) {
+                const domains = encryptedDomains.map(encoded => atob(encoded));
+                
+                let hasRedirected = false;
+                let completedCount = 0;
+                const totalCount = domains.length;
+                const checkPromises = domains.map(async (url, index) => {
+                    const result = await checkDomainWithStatus(url, index);
+                    if (result.success && !hasRedirected) {
+                        hasRedirected = true;
                         statusElement.textContent = `🎉已找到最快线路，正在跳转...`;
                         setTimeout(() => {
-                            window.location.href = domainUrl;
+                            window.location.href = result.url;
                         }, 1000);
-                        return;
                     }
-                }
+                    
+                    completedCount++;
+                    
+                    if (completedCount === totalCount && !hasRedirected) {
+                        statusElement.textContent = '暂时无法找到可用线路，请等待修复';
+                    }
+                    
+                    return result;
+                });
+                await Promise.all(checkPromises);
 
-                statusElement.textContent = '暂时无法找到可用线路，请等待修复';
             } catch (error) {
+                console.error('检测过程出错:', error);
                 statusElement.textContent = '检测过程出错，请等待修复';
             }
         }
