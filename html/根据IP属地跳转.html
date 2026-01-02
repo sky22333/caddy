@@ -1,26 +1,27 @@
-// 获取访问者IP，CN跳百度，其他国家跳B站，获取不到则打印Hello World
 <!DOCTYPE html>
 <html>
-
 <head>
+  <!-- 预连接 -->
+  <link rel="preconnect" href="https://ipinfo.io" crossorigin>
+  <!-- DNS预解析 -->
+  <link rel="dns-prefetch" href="https://www.bilibili.com">
+  <link rel="dns-prefetch" href="https://www.bing.com">
   <script>
     function getIPInfo() {
       fetch('https://ipinfo.io/json')
        .then(response => response.json())
        .then(data => {
+          // 根据国家代码跳转：CN -> B站，其他 -> Bing
           if (data.country === 'CN') {
-            window.location.href = 'https://www.baidu.com';
-          } else {
             window.location.href = 'https://www.bilibili.com';
+          } else {
+            window.location.href = 'https://www.bing.com';
           }
         })
-       .catch(error => console.error('无法获取 IP 信息:', error));
+       .catch(error => console.error('无法获取位置:', error));
     }
   </script>
 </head>
-
 <body onload="getIPInfo()">
-  <h1>Hello World!</h1>
 </body>
-
 </html>
