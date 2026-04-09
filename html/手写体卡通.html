@@ -1,0 +1,345 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneNav - 书签管理与快速搜索</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#2d2d2d',
+                        light: '#fdfdfc',
+                        card1: '#e5e0d8',
+                        card2: '#fff9c4',
+                        card3: '#ffffff',
+                        accentRed: '#ff4d4d',
+                        accentBlue: '#2d5da1',
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                        hand: ['Kalam', 'cursive', '"Noto Sans SC"'],
+                    },
+                    boxShadow: {
+                        'brutal': '4px 4px 0px 0px #2d2d2d',
+                        'brutal-sm': '2px 2px 0px 0px #2d2d2d',
+                        'none': '0 0 #0000',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #2d2d2d;
+        }
+        
+        /* Neo-brutalism shapes */
+        .shape-1 { border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; }
+        .shape-2 { border-radius: 24px 220px 16px 230px / 210px 24px 220px 18px; }
+        .shape-3 { border-radius: 210px 24px 220px 16px / 18px 220px 16px 240px; }
+        .shape-4 { border-radius: 18px 220px 24px 210px / 24px 20px 230px 18px; }
+        .shape-5 { border-radius: 28px 210px 20px 230px / 24px 26px 200px 22px; }
+
+        .brutal-border { border: 3px solid #2d2d2d; }
+        .brutal-border-sm { border: 2px solid #2d2d2d; }
+
+        /* Nav links hover effect (no translation, just border/bg change) */
+        .nav-link {
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        .nav-link:hover {
+            border-color: #2d2d2d;
+            background-color: #ffffff;
+            color: #2d2d2d;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center pt-28 md:pt-36 lg:pt-40">
+    
+    <!-- Nav -->
+    <header class="fixed inset-x-0 top-0 z-50 pointer-events-none transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" id="main-header">
+        <div class="pointer-events-none flex justify-center w-full transition-all duration-300 pt-4 px-4 sm:px-6" id="nav-container">
+            <nav id="main-nav" class="pointer-events-auto flex w-full max-w-[1550px] items-center justify-between transition-all duration-300 border-[3px] border-[#2d2d2d] bg-[#fdfbf7] text-[#2d2d2d] shape-1 shadow-brutal px-6 py-3">
+                
+                <!-- Logo -->
+                <a href="#home" class="flex items-center gap-3 transition-colors px-3 py-2 hover:bg-card2/70 shape-4">
+                    <i data-lucide="navigation" class="w-8 h-8 text-accentRed"></i>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="sm:text-base font-hand font-bold text-xl text-[#2d2d2d] leading-none mt-1">OneNav</span>
+                        <span class="hidden text-xs sm:block text-[#2d2d2d]/65 leading-none">浏览器书签工作台</span>
+                    </div>
+                </a>
+
+                <!-- Links -->
+                <div class="hidden sm:flex items-center gap-1.5 bg-card2/50 border-[3px] border-[#2d2d2d] px-2 py-1.5 shape-2">
+                    <a href="#home" class="inline-flex items-center justify-center h-8 px-3 font-normal text-[17px] bg-white border-[3px] border-[#2d2d2d] shape-4 shadow-brutal-sm">首页</a>
+                    <a href="#store" class="inline-flex items-center justify-center h-8 px-3 font-normal text-[17px] bg-transparent shape-4 nav-link">商店</a>
+                    <a href="#pricing" class="inline-flex items-center justify-center h-8 px-3 font-normal text-[17px] bg-transparent shape-3 nav-link">套餐</a>
+                </div>
+
+                <!-- Mobile Btn -->
+                <button class="inline-flex sm:hidden items-center justify-center w-9 h-9 border-[3px] border-[#2d2d2d] bg-white shape-2 shadow-brutal-sm hover:bg-card2 transition-colors">
+                    <i data-lucide="menu" class="w-4 h-4"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl w-full flex flex-col gap-12 animate-fade-in-up px-6 sm:px-8 pb-12">
+        
+        <!-- Header -->
+        <header class="flex flex-col gap-6 max-w-3xl">
+            <div class="inline-flex items-center gap-2 w-fit brutal-border-sm bg-card2 px-3 py-1 shape-4 shadow-brutal-sm text-sm font-medium">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                给每天都在堆书签的人
+            </div>
+            <h1 class="font-hand text-6xl md:text-8xl font-bold tracking-tight">OneNav Home</h1>
+            <p class="font-hand text-3xl md:text-4xl text-dark">书签不该先想归档而该先到达!</p>
+            <p class="text-lg text-dark/80 leading-relaxed max-w-2xl mt-2">
+                OneNav 是一个书签管理工具，支持书签增删改查、排序、导入导出与快速搜索<br>
+                首页像一张钉在墙上的工作草稿，把核心动作写得足够大：快速找到，顺手收藏，长期维护。
+            </p>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+            
+            <!-- Card 4 -->
+            <div class="brutal-border bg-card1 p-8 shape-1 shadow-brutal transition-transform duration-100 hover:-translate-y-1 lg:col-span-2 flex flex-col justify-between gap-8">
+                <div>
+                    <div class="inline-flex items-center gap-2 w-fit brutal-border-sm bg-card2 px-3 py-1 shape-3 text-sm font-medium mb-4">
+                        核心功能
+                    </div>
+                    <h2 class="font-hand text-4xl font-bold mb-6">书签管理</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="flex gap-3">
+                            <div class="w-10 h-10 brutal-border bg-card3 shape-2 shadow-brutal-sm flex items-center justify-center shrink-0">
+                                <i data-lucide="search" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">搜索</h3>
+                                <p class="text-dark/70">标题 / URL / 标签一起检索</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-10 h-10 brutal-border bg-card3 shape-4 shadow-brutal-sm flex items-center justify-center shrink-0">
+                                <i data-lucide="bookmark-plus" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">收藏</h3>
+                                <p class="text-dark/70">当前页就能顺手收藏</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-10 h-10 brutal-border bg-card3 shape-5 shadow-brutal-sm flex items-center justify-center shrink-0">
+                                <i data-lucide="folder-tree" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">结构</h3>
+                                <p class="text-dark/70">目录与标签只做该做的事</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-10 h-10 brutal-border bg-card3 shape-1 shadow-brutal-sm flex items-center justify-center shrink-0">
+                                <i data-lucide="arrow-left-right" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">导入导出</h3>
+                                <p class="text-dark/70">数据自由流转</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="brutal-border bg-card3 p-8 shape-2 shadow-brutal transition-transform duration-100 hover:-translate-y-1 flex flex-col justify-between gap-8 md:col-span-1">
+                <div>
+                    <h2 class="font-hand text-3xl font-bold mb-2">快捷键</h2>
+                    <p class="text-dark/80 mb-6">Command唤起搜索，再决定去哪里。</p>
+                    <div class="flex flex-wrap gap-2">
+                        <kbd class="brutal-border bg-card3 px-3 py-2 shape-4 shadow-brutal-sm font-bold text-lg">⌘ Cmd</kbd>
+                        <kbd class="brutal-border bg-card3 px-3 py-2 shape-3 shadow-brutal-sm font-bold text-lg">⇧ Shift</kbd>
+                        <kbd class="brutal-border bg-card3 px-3 py-2 shape-5 shadow-brutal-sm font-bold text-lg">K</kbd>
+                    </div>
+                </div>
+                <div class="w-14 h-14 brutal-border bg-card3 shape-1 shadow-brutal-sm flex items-center justify-center self-end">
+                    <i data-lucide="command" class="w-7 h-7 text-accentBlue"></i>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="brutal-border bg-card3 p-8 shape-3 shadow-brutal transition-transform duration-100 hover:-translate-y-1 flex flex-col gap-4 -rotate-1 relative">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full border-[3px] border-dark bg-accentRed z-10"></div>
+                <h2 class="font-hand text-3xl font-bold mt-2">轻收藏</h2>
+                <div class="flex items-start gap-3 mt-2">
+                    <div class="w-10 h-10 brutal-border bg-card2 shape-4 shadow-brutal-sm flex items-center justify-center shrink-0 mt-1">
+                        <i data-lucide="pin" class="w-5 h-5 text-accentRed"></i>
+                    </div>
+                    <div>
+                        <p class="text-lg font-bold">当前页完成标注</p>
+                        <p class="text-dark/70">Popup / Side Panel 负责轻量收集</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3 mt-2">
+                    <div class="w-10 h-10 brutal-border bg-card1 shape-1 shadow-brutal-sm flex items-center justify-center shrink-0 mt-1">
+                        <i data-lucide="layers" class="w-5 h-5 text-accentBlue"></i>
+                    </div>
+                    <div>
+                        <p class="text-lg font-bold">结构感</p>
+                        <p class="text-dark/70">目录和标签随后补位</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Workflow -->
+            <div class="brutal-border bg-dark text-white p-8 shape-4 shadow-brutal transition-transform duration-100 hover:-translate-y-1 lg:col-span-2 flex flex-col gap-6">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="inline-flex items-center gap-2 w-fit brutal-border-sm border-white bg-dark px-3 py-1 shape-2 text-sm font-medium mb-4 text-white">
+                            Workflow
+                        </div>
+                        <h2 class="font-hand text-4xl font-bold text-white mb-2">先可达，再整洁。</h2>
+                        <p class="text-white/80 max-w-xl">动作顺序应该很自然：先找到，再收进去，最后慢慢整理。把整理放在高频动作之后，工作流才不会被自己打断。</p>
+                    </div>
+                    <i data-lucide="route" class="w-12 h-12 text-card2 opacity-80 hidden sm:block"></i>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+                    <div class="flex flex-col gap-2">
+                        <span class="text-card2 font-bold font-hand text-xl">01 next</span>
+                        <h3 class="font-bold text-lg">叫出目标</h3>
+                        <p class="text-white/70 text-sm">先用搜索和快捷键把你要去的页面叫出来。</p>
+                    </div>
+                    <div class="flex flex-col gap-2 relative">
+                        <i data-lucide="arrow-right" class="absolute -left-4 top-1 text-white/30 hidden sm:block"></i>
+                        <span class="text-card2 font-bold font-hand text-xl">02 next</span>
+                        <h3 class="font-bold text-lg">顺手收下</h3>
+                        <p class="text-white/70 text-sm">在当前页面完成收藏、补标签，减少跳出工作流。</p>
+                    </div>
+                    <div class="flex flex-col gap-2 relative">
+                        <i data-lucide="arrow-right" class="absolute -left-4 top-1 text-white/30 hidden sm:block"></i>
+                        <span class="text-card2 font-bold font-hand text-xl">03</span>
+                        <h3 class="font-bold text-lg">以后再整理</h3>
+                        <p class="text-white/70 text-sm">当内容开始积累，再用结构和分类慢慢归位。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Notes & Store -->
+            <div class="brutal-border bg-card1 p-8 shape-5 shadow-brutal transition-transform duration-100 hover:-translate-y-1 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="flex flex-col gap-4">
+                    <h2 class="font-hand text-3xl font-bold">Store</h2>
+                    <p class="text-dark/80">首页之外，常用入口都在商店里继续展开。书签商店会把云端书签、短码、工具入口和热门推荐收在一起。</p>
+                    <p class="text-dark/80">首页负责讲清主线，商店负责把常用内容铺开给你挑。</p>
+                    <button class="brutal-border bg-card3 shape-3 shadow-brutal transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-brutal-sm active:translate-x-[4px] active:translate-y-[4px] active:shadow-none px-6 py-3 font-bold text-lg flex items-center gap-2 w-fit mt-2 hover:bg-accentBlue hover:text-white group">
+                        打开书签商店
+                        <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+                <div class="brutal-border bg-card2 p-6 shape-1 shadow-brutal-sm rotate-1 relative">
+                    <div class="absolute -top-3 left-6 w-12 h-6 bg-dark/10 -rotate-6"></div>
+                    <h3 class="font-hand text-2xl font-bold mb-3">Notes</h3>
+                    <ul class="space-y-2 text-dark/80 list-disc list-inside marker:text-accentRed">
+                        <li>首页只保留会每天触发的动作。</li>
+                        <li>搜索优先、收藏足够轻、结构只是后来维护的工具。</li>
+                        <li>搜索优先于层层展开目录。</li>
+                        <li>整理是收尾动作，不是进入门槛。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="brutal-border bg-card2 p-6 shape-2 shadow-brutal lg:col-span-3 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div>
+                    <h2 class="font-hand text-2xl font-bold mb-1">首页只负责把你带到起点。</h2>
+                    <p class="text-dark/70">文档、商店、套餐和后台，都留到真正需要的时候再看。</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button class="brutal-border bg-card3 shape-1 shadow-brutal transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-brutal-sm active:translate-x-[4px] active:translate-y-[4px] active:shadow-none px-5 py-2 font-bold hover:bg-accentRed hover:text-white">文档</button>
+                    <button class="brutal-border bg-card3 shape-4 shadow-brutal transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-brutal-sm active:translate-x-[4px] active:translate-y-[4px] active:shadow-none px-5 py-2 font-bold hover:bg-accentRed hover:text-white">商店</button>
+                    <button class="brutal-border bg-card1 shape-5 shadow-brutal transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-brutal-sm active:translate-x-[4px] active:translate-y-[4px] active:shadow-none px-5 py-2 font-bold hover:bg-accentBlue hover:text-white">套餐</button>
+                </div>
+            </div>
+            
+            <!-- Info -->
+            <div class="col-span-1 md:col-span-2 lg:col-span-3 text-center mt-4 text-dark/60 text-sm">
+                <p>Chrome 与 Firefox 已经可用。更多浏览器先不抢着上，等真正打磨好再放出来。</p>
+                <p class="mt-1">不做占位入口，也不做空承诺。</p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Navigation Scroll Animation
+        const mainHeader = document.getElementById('main-header');
+        const navContainer = document.getElementById('nav-container');
+        const nav = document.getElementById('main-nav');
+        
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            
+            // Handle Scroll Direction (Show/Hide)
+            if (currentScrollY > 100 && currentScrollY > lastScrollY) {
+                // Scrolling down & past threshold -> Hide header
+                mainHeader.style.transform = 'translateY(-100%)';
+            } else {
+                // Scrolling up or at top -> Show header
+                mainHeader.style.transform = 'translateY(0)';
+            }
+            lastScrollY = currentScrollY;
+
+            // Handle Nav Styling based on scroll position
+            if (currentScrollY > 20) {
+                // Scrolled state
+                navContainer.classList.remove('pt-4', 'px-4', 'sm:px-6');
+                nav.classList.add('bg-[#fdfbf7]/95', 'backdrop-blur-sm');
+                nav.classList.remove('bg-[#fdfbf7]', 'shadow-brutal');
+                nav.classList.add('shadow-[4px_4px_0px_0px_#2d2d2d]');
+                nav.style.maxWidth = '100%';
+                nav.style.borderRadius = '0';
+            } else {
+                // Top state
+                navContainer.classList.add('pt-4', 'px-4', 'sm:px-6');
+                nav.classList.remove('bg-[#fdfbf7]/95', 'backdrop-blur-sm', 'shadow-[4px_4px_0px_0px_#2d2d2d]');
+                nav.classList.add('bg-[#fdfbf7]', 'shadow-brutal');
+                nav.style.maxWidth = '1550px';
+                nav.style.borderRadius = '255px 15px 225px 15px / 15px 225px 15px 255px'; // shape-1
+            }
+        });
+    </script>
+</body>
+</html>
