@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>灵动岛</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #E5F0FB;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      font-family: "Segoe UI", "Microsoft YaHei UI", sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+    
+    /* 模拟屏幕顶部 */
+    #screen-top {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding-top: 16px;
+    }
+
+    #dynamic-island {
+      width: 300px;
+      height: 45px;
+      border-radius: 20px;
+      background: rgba(20, 20, 20, 1);
+      color: #ffffff;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.05),
+                  height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.05),
+                  background 0.4s ease,
+                  border-radius 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.05);
+      overflow: hidden;
+      box-sizing: border-box;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    /* 悬停展开态*/
+    #dynamic-island.hovered {
+      height: 125px;
+      background: rgba(20, 20, 20, 1);
+    }
+
+    /* 点击更多工具后展开态*/
+    #dynamic-island.expanded {
+      height: 200px;
+      background: rgba(20, 20, 20, 1);
+    }
+
+    /* --- View Time --- */
+    #view-time {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.05);
+      pointer-events: auto;
+      z-index: 10;
+    }
+    
+    #dynamic-island.expanded #view-time {
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+      pointer-events: none;
+    }
+
+    #time-row {
+      width: 100%;
+      height: 45px;
+      flex: 0 0 45px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+
+    #status-panel {
+      position: absolute;
+      left: 0;
+      top: 45px;
+      width: 100%;
+      padding: 4px 8px;
+      box-sizing: border-box;
+      font-size: 11px;
+      line-height: 1.45;
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.05);
+      pointer-events: none;
+    }
+
+    #dynamic-island.hovered #status-panel {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    #hover-hint {
+      position: absolute;
+      left: 50%;
+      bottom: 4px;
+      transform: translateX(-50%) translateY(5px) scale(0.95);
+      font-size: 14px;
+      line-height: 18px;
+      color: rgba(255, 255, 255, 0.9);
+      letter-spacing: 0.5px;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.05);
+      cursor: pointer;
+      pointer-events: none;
+      white-space: nowrap;
+      padding: 0 12px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      backdrop-filter: blur(8px);
+    }
+
+    #dynamic-island.hovered #hover-hint {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* 悬停时的工具提示和面板元素 */
+    .status-item { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .status-icon-left { width: 16px; height: 16px; flex-shrink: 0; }
+    .status-content { flex: 1; }
+    .status-cards { display: flex; flex-direction: column; gap: 3px; width: 100%; }
+    .status-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 2px;
+      transition: all 140ms ease;
+    }
+    .status-card-row { display: flex; gap: 3px; width: 100%; }
+    .status-card-half { flex: 1; }
+    .status-card:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+    .status-line {
+      white-space: nowrap;
+      overflow: hidden;
+      position: relative;
+      height: 12px;
+      line-height: 12px;
+      width: 100%;
+      text-overflow: ellipsis;
+    }
+    .status-text { display: inline-block; }
+    .icon-group { display: flex; align-items: center; gap: 12px; min-width: 44px; }
+    
+    .icon-btn {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-sizing: border-box;
+      background: transparent;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .icon-btn:hover { background: rgba(255, 255, 255, 0.15); transform: scale(1.1); }
+    .icon-btn:active { transform: scale(0.9); }
+    .icon-btn-green { background: rgba(52, 199, 89, 0.35); }
+    
+    #right-icons { justify-content: flex-end; }
+    .status-icon { width: 16px; height: 16px; display: block; object-fit: contain; }
+    
+    #time {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      min-width: 92px;
+      text-align: center;
+    }
+
+    /* --- View Expanded --- */
+    #view-expanded {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transform: translateY(15px) scale(0.95);
+      transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.05);
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    #dynamic-island.expanded #view-expanded.entered {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    #additional-content {
+      position: absolute;
+      top: 35px;
+      left: 18px;
+      right: 18px;
+      color: rgba(255, 255, 255, 0.92);
+    }
+    .brightness-shell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .brightness-icon { width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; opacity: 0.92; }
+    .brightness-track { flex: 1; display: flex; align-items: center; min-width: 0; }
+    
+    #brightness-slider {
+      width: 100%;
+      height: 24px;
+      margin: 0;
+      --fill-percent: 50%;
+      background: transparent;
+      -webkit-appearance: none;
+      appearance: none;
+      outline: none;
+    }
+    #brightness-slider::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.94) var(--fill-percent), rgba(255, 255, 255, 0.14) var(--fill-percent), rgba(255, 255, 255, 0.14) 100%);
+    }
+    #brightness-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      margin-top: -6px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+    }
+
+    .brightness-value {
+      min-width: 44px;
+      text-align: right;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      color: rgba(255, 255, 255, 0.88);
+    }
+    .action-buttons {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+    }
+    .action-button {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .action-button:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+    .action-button:active {
+      transform: translateY(0) scale(0.96);
+    }
+    .action-icon { width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; opacity: 0.92; }
+    .action-text { font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.92); }
+    
+    .footer-info {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .footer-logo { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.8; }
+    .footer-text { min-width: 0; }
+    .footer-link { color: rgba(120, 190, 255, 0.96); text-decoration: none; }
+    .footer-link:hover { text-decoration: underline; }
+    
+    #close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 18px;
+      height: 18px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 59, 48, 0.9);
+      cursor: pointer;
+      padding: 0;
+      transition: transform 140ms ease;
+    }
+    #close-btn:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+<div id="screen-top">
+  <div id="dynamic-island">
+    
+    <!-- 第一层：时间与状态面板-->
+    <div id="view-time">
+      <div id="time-row">
+        <div id="left-icons" class="icon-group">
+          <button id="wifi-btn" class="icon-btn icon-btn-green" type="button" aria-label="wifi">
+            <img class="status-icon" src="image/wifi.png" alt="wifi">
+          </button>
+          <button id="bluetooth-btn" class="icon-btn" type="button" aria-label="bluetooth">
+            <img class="status-icon" src="image/bluetooth.png" alt="bluetooth">
+          </button>
+        </div>
+        <div id="time">00:00:00</div>
+        <div id="right-icons" class="icon-group">
+          <button id="battery-btn" class="icon-btn icon-btn-green" type="button" aria-label="battery">
+            <img class="status-icon" src="image/battery.png" alt="battery">
+          </button>
+          <button id="notice-btn" class="icon-btn" type="button" aria-label="notice">
+            <img class="status-icon" src="image/notice.png" alt="notice">
+          </button>
+        </div>
+      </div>
+      <div id="status-panel">
+        <div class="status-cards">
+          <div class="status-card-row">
+            <div class="status-card status-card-half">
+              <div class="status-item">
+                <img class="status-icon-left" src="image/wifi.png" alt="wifi">
+                <div class="status-content">
+                  <div id="network-status" class="status-line">
+                    <span class="status-text">网络：已连接</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="status-card status-card-half">
+              <div class="status-item">
+                <img class="status-icon-left" src="image/battery.png" alt="battery">
+                <div class="status-content">
+                  <div id="battery-status" class="status-line">
+                    <span class="status-text">电池：85%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="status-card">
+            <div class="status-item">
+              <img class="status-icon-left" src="image/bluetooth.png" alt="bluetooth">
+              <div class="status-content">
+                <div id="bluetooth-status" class="status-line">
+                  <span class="status-text">蓝牙：未连接</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="hover-hint">&nbsp;&nbsp;&nbsp;&nbsp;更多工具&nbsp;&nbsp;&nbsp;&nbsp;</div>
+    </div>
+
+    <!-- 第二层：展开工具面板-->
+    <div id="view-expanded">
+      <button id="close-btn" type="button" aria-label="close"></button>
+      <div id="additional-content">
+        <div class="brightness-shell">
+          <img class="brightness-icon" src="image/light.png" alt="brightness">
+          <div class="brightness-track">
+            <input id="brightness-slider" type="range" min="0" max="100" value="50">
+          </div>
+          <div id="brightness-value" class="brightness-value">50%</div>
+        </div>
+        <div class="action-buttons">
+          <div class="action-button" id="screenshot-btn">
+            <img class="action-icon" src="image/screenshot.png" alt="screenshot">
+            <span class="action-text">截图</span>
+          </div>
+          <div class="action-button" id="sleep-btn">
+            <img class="action-icon" src="image/sleep.png" alt="sleep">
+            <span class="action-text">睡眠</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-info">
+        <svg class="footer-logo" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        <div class="footer-text">
+          项目地址：<a class="footer-link" href="https://github.com/sky22333" target="_blank">https://github.com/sky22333</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // DOM 元素缓存
+  const island = document.getElementById("dynamic-island");
+  const viewExpanded = document.getElementById("view-expanded");
+  const hoverHint = document.getElementById("hover-hint");
+  const closeBtn = document.getElementById("close-btn");
+  const timeNode = document.getElementById("time");
+  const brightnessSlider = document.getElementById("brightness-slider");
+  const brightnessValue = document.getElementById("brightness-value");
+  const screenshotBtn = document.getElementById("screenshot-btn");
+  const sleepBtn = document.getElementById("sleep-btn");
+
+  let hoverTimer = null;
+  let isExpanded = false;
+  let isSleepMode = false;
+
+  // 1. 模拟时间更新
+  function updateClock() {
+    const now = new Date();
+    const pad = (n) => n.toString().padStart(2, '0');
+    timeNode.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // 2. 悬停动画逻辑 
+  island.addEventListener("mouseenter", () => {
+    if (isExpanded) return;
+    if (hoverTimer) clearTimeout(hoverTimer);
+    hoverTimer = setTimeout(() => {
+      island.classList.add("hovered");
+    }, 150);
+  });
+
+  island.addEventListener("mouseleave", () => {
+    if (isExpanded) return;
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+      hoverTimer = null;
+    }
+    island.classList.remove("hovered");
+  });
+
+  // 3. 点击 "更多工具" 切换到面板
+  hoverHint.addEventListener("click", () => {
+    isExpanded = true;
+    island.classList.remove("hovered");
+    island.classList.add("expanded");
+    
+    // 动画效果
+    viewExpanded.classList.remove("entered");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        viewExpanded.classList.add("entered");
+      });
+    });
+  });
+
+  // 4. 点击关闭按钮，恢复到初始小岛状态
+  closeBtn.addEventListener("click", () => {
+    isExpanded = false;
+    viewExpanded.classList.remove("entered");
+    island.classList.remove("expanded");
+    island.classList.remove("hovered"); // 确保回到最小状态
+  });
+
+  // 5. 亮度滑块交互
+  brightnessSlider.addEventListener("input", function() {
+    const val = this.value;
+    this.style.setProperty("--fill-percent", `${val}%`);
+    brightnessValue.textContent = `${val}%`;
+  });
+
+  // 6. 截图按钮模拟
+  screenshotBtn.addEventListener("click", function() {
+    this.style.opacity = "0.6";
+    this.style.pointerEvents = "none";
+    this.querySelector('.action-text').textContent = "截图中...";
+    
+    setTimeout(() => {
+      this.style.opacity = "1";
+      this.style.pointerEvents = "auto";
+      this.querySelector('.action-text').textContent = "截图";
+    }, 1000);
+  });
+
+  // 7. 睡眠按钮模拟
+  sleepBtn.addEventListener("click", function() {
+    this.style.opacity = "0.6";
+    this.style.pointerEvents = "none";
+    
+    isSleepMode = !isSleepMode;
+    if (isSleepMode) {
+      this.querySelector('.action-text').textContent = "退出";
+      this.style.background = "rgba(52, 199, 89, 0.35)";
+    } else {
+      this.querySelector('.action-text').textContent = "睡眠";
+      this.style.background = "rgba(255, 255, 255, 0.08)";
+    }
+    
+    setTimeout(() => {
+      this.style.opacity = "1";
+      this.style.pointerEvents = "auto";
+    }, 1000);
+  });
+
+</script>
+</body>
+</html>
