@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MD3 现代化风格后台管理面板</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ==================== MD3 核心令牌与间距系统 ==================== */
+        :root {
+            /* 颜色系统 - 基于背景色 #F4F7F7 衍生的青墨/灰蓝色系 */
+            --md-sys-color-primary: #333446;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #B8CFCE;
+            --md-sys-color-on-primary-container: #00131A;
+            --md-sys-color-secondary: #7F8CAA;
+            --md-sys-color-secondary-container: #D3D8E8;
+            --md-sys-color-surface: #FFFFFF;
+            --md-sys-color-on-surface: #333446;
+            --md-sys-color-surface-variant: #EAEFEF;
+            --md-sys-color-on-surface-variant: #505462;
+            --md-sys-color-background: #F4F7F7;
+            --md-sys-color-outline: #CCD0D8;
+            --md-sys-color-error: #BA1A1A;
+            --md-sys-color-success: #4CAF50;
+
+            /* 阴影系统  */
+            --md-elevation-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.05), 0px 1px 2px 0px rgba(0, 0, 0, 0.03);
+            --md-elevation-hover: 0px 8px 24px rgba(0, 0, 0, 0.08);
+
+            /* 间距与排版系统 */
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 32px;
+            --border-radius-sm: 12px;
+            --border-radius-md: 24px;
+
+            /* 动画曲线 */
+            --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+            --ease-emphasized: cubic-bezier(0.2, 0.0, 0, 1.0);
+            --duration-sm: 200ms;
+            --duration-md: 300ms;
+            --duration-lg: 500ms;
+        }
+
+        /* 暗黑模式 */
+        [data-theme="dark"] {
+            --md-sys-color-primary: #B8CFCE;
+            --md-sys-color-on-primary: #002021;
+            --md-sys-color-primary-container: #4A5B63;
+            --md-sys-color-on-primary-container: #D8EAE9;
+            --md-sys-color-secondary: #9BA7C4;
+            --md-sys-color-secondary-container: #424D68;
+            --md-sys-color-surface: #1F2028;
+            --md-sys-color-on-surface: #E3E6EF;
+            --md-sys-color-surface-variant: #292B33;
+            --md-sys-color-on-surface-variant: #9599A8;
+            --md-sys-color-background: #12131A;
+            --md-sys-color-outline: #505462;
+            
+            --md-elevation-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.3);
+            --md-elevation-hover: 0px 8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ==================== 基础与重置 ==================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-surface);
+            overflow: hidden; 
+            transition: background-color var(--duration-md) var(--ease-standard);
+        }
+        .material-symbols-outlined { vertical-align: middle; }
+
+        /* ==================== 视图管理器 ==================== */
+        .app-view {
+            position: fixed; inset: 0; opacity: 0; visibility: hidden;
+            transform: translateY(20px) scale(0.98);
+            transition: opacity var(--duration-lg) var(--ease-emphasized),
+                        transform var(--duration-lg) var(--ease-emphasized),
+                        visibility var(--duration-lg);
+            z-index: 1;
+        }
+        .app-view.active {
+            opacity: 1; visibility: visible; transform: translateY(0) scale(1); z-index: 10;
+        }
+
+        /* ==================== 登录页 ==================== */
+        #view-login {
+            background: linear-gradient(135deg, var(--md-sys-color-background), var(--md-sys-color-surface-variant));
+            display: flex; align-items: center; justify-content: center; padding: var(--spacing-sm);
+        }
+        .login-box {
+            width: 100%; max-width: 400px; text-align: center; padding: var(--spacing-lg) var(--spacing-md);
+        }
+        .login-input {
+            width: 100%; padding: var(--spacing-sm); margin-top: var(--spacing-sm);
+            background: var(--md-sys-color-background);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: var(--border-radius-sm);
+            color: var(--md-sys-color-on-surface); font-size: 16px;
+            transition: border-color var(--duration-sm);
+        }
+        .login-input:focus { outline: none; border-color: var(--md-sys-color-primary); }
+
+        /* ==================== MD3 通用组件 ==================== */
+        .md-card {
+            background: var(--md-sys-color-surface);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            box-shadow: var(--md-elevation-1);
+            transition: box-shadow var(--duration-md) var(--ease-standard);
+        }
+        /* 仅阴影变化 */
+        .md-card:hover { box-shadow: var(--md-elevation-hover); }
+
+        .md-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 24px; border-radius: 100px; border: none; font-size: 14px; font-weight: 500;
+            cursor: pointer; transition: all var(--duration-sm) var(--ease-standard);
+        }
+        .md-btn-primary { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+        .md-btn-primary:hover { opacity: 0.9; box-shadow: var(--md-elevation-1); }
+        .md-btn-icon { width: 48px; height: 48px; border-radius: 50%; background: transparent; color: var(--md-sys-color-on-surface-variant); }
+        .md-btn-icon:hover { background: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-surface); }
+
+        .md-chip { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; }
+        .md-chip.success { background: rgba(76, 175, 80, 0.15); color: var(--md-sys-color-success); }
+        .md-chip.warning { background: rgba(255, 152, 0, 0.15); color: #FF9800; }
+
+        .md-switch { position: relative; display: inline-block; width: 52px; height: 32px; }
+        .md-switch input { opacity: 0; width: 0; height: 0; }
+        .md-switch .slider {
+            position: absolute; cursor: pointer; inset: 0;
+            background-color: var(--md-sys-color-surface-variant);
+            border: 2px solid var(--md-sys-color-outline); border-radius: 32px; transition: var(--duration-sm);
+        }
+        .md-switch .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 6px; bottom: 6px;
+            background-color: var(--md-sys-color-outline); border-radius: 50%; transition: var(--duration-md) var(--ease-emphasized);
+        }
+        .md-switch input:checked + .slider { background-color: var(--md-sys-color-primary); border-color: var(--md-sys-color-primary); }
+        .md-switch input:checked + .slider:before { transform: translateX(20px) scale(1.5); background-color: var(--md-sys-color-on-primary); }
+
+        /* ==================== 后台布局结构 ==================== */
+        #view-dashboard { display: flex; background: var(--md-sys-color-background); }
+
+        /* 移动端菜单遮罩层 */
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+            z-index: 90; opacity: 0; transition: opacity var(--duration-md);
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 280px; height: 100vh; flex-shrink: 0;
+            background: var(--md-sys-color-surface);
+            border-right: 1px solid var(--md-sys-color-surface-variant);
+            display: flex; flex-direction: column; z-index: 100;
+            transition: transform var(--duration-md) var(--ease-standard);
+        }
+        .sidebar-brand {
+            height: 80px; display: flex; align-items: center; padding: 0 var(--spacing-md);
+            font-size: 20px; font-weight: 700; color: var(--md-sys-color-primary); gap: 12px;
+        }
+        .sidebar-menu { flex: 1; padding: var(--spacing-sm); overflow-y: auto; }
+        .menu-label {
+            font-size: 12px; font-weight: 700; color: var(--md-sys-color-on-surface-variant);
+            margin: var(--spacing-md) 0 var(--spacing-xs) var(--spacing-md); letter-spacing: 1px;
+        }
+        .menu-item {
+            display: flex; align-items: center; gap: 16px;
+            padding: 14px var(--spacing-md); margin-bottom: 4px;
+            border-radius: 100px; cursor: pointer; font-weight: 500;
+            color: var(--md-sys-color-on-surface-variant); transition: all var(--duration-sm);
+        }
+        .menu-item:hover { background: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-surface); }
+        .menu-item.active { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
+
+        /* 主体区域 */
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        .topbar {
+            height: 80px; padding: 0 var(--spacing-lg); flex-shrink: 0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        /* 移动端汉堡菜单按钮 (默认隐藏) */
+        .menu-toggle-btn {
+            display: none; background: transparent; border: none;
+            color: var(--md-sys-color-on-surface); padding: 8px; margin-right: 8px; cursor: pointer;
+        }
+        
+        .content-area {
+            flex: 1; overflow-y: auto; padding: 0 var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
+            position: relative;
+        }
+
+        .page-content { display: none; animation: fadeUp var(--duration-lg) var(--ease-emphasized) forwards; }
+        .page-content.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ==================== 页面内容模块 ==================== */
+        .header-title { font-size: 28px; font-weight: 500; margin-bottom: var(--spacing-md); }
+        
+        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-md); }
+        .stat-card .title { font-size: 14px; color: var(--md-sys-color-on-surface-variant); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;}
+        .stat-card .value { font-size: 32px; font-weight: 700; margin-bottom: 8px;}
+        .icon-box { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
+
+        .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md); }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { padding: var(--spacing-sm); font-size: 14px; color: var(--md-sys-color-on-surface-variant); border-bottom: 1px solid var(--md-sys-color-surface-variant); }
+        td { padding: var(--spacing-sm); font-size: 14px; border-bottom: 1px solid var(--md-sys-color-surface-variant); }
+        tr:hover td { background: var(--md-sys-color-surface-variant); }
+
+        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-sm) 0; border-bottom: 1px solid var(--md-sys-color-surface-variant); }
+
+        /* ==================== 移动端极致适配 ==================== */
+        @media (max-width: 900px) {
+            .grid-layout { grid-template-columns: 1fr; }
+            .topbar { padding: 0 var(--spacing-sm); }
+            .content-area { padding: 0 var(--spacing-sm) var(--spacing-sm) var(--spacing-sm); }
+            
+            /* 显示汉堡菜单 */
+            .menu-toggle-btn { display: block; }
+            .breadcrumb-text { display: none; } /* 移动端隐藏面包屑文本，节约空间 */
+            
+            /* 侧边栏变为抽屉式 */
+            .sidebar {
+                position: fixed; top: 0; left: 0; bottom: 0;
+                transform: translateX(-100%);
+                box-shadow: none;
+            }
+            .sidebar.mobile-active {
+                transform: translateX(0);
+                box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+            }
+            
+            /* 激活遮罩层 */
+            .sidebar-overlay.mobile-active {
+                display: block; opacity: 1;
+            }
+
+            .md-card { padding: var(--spacing-sm); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="view-login" class="app-view active">
+        <div class="md-card login-box">
+            <span class="material-symbols-outlined" style="font-size: 48px; color: var(--md-sys-color-primary);">space_dashboard</span>
+            <h1 style="margin: 16px 0 8px; font-size: 24px;">管理控制台</h1>
+            <p style="color: var(--md-sys-color-on-surface-variant); font-size: 14px; margin-bottom: 32px;">请登录以继续操作</p>
+            
+            <div style="text-align: left; margin-bottom: 24px;">
+                <input type="text" class="login-input" placeholder="账号 (admin)" value="admin">
+                <input type="password" class="login-input" placeholder="密码" value="123456">
+            </div>
+            <button class="md-btn md-btn-primary" style="width: 100%; height: 48px;" onclick="doLogin()">
+                <span class="material-symbols-outlined">login</span> 登 录
+            </button>
+        </div>
+    </div>
+
+    <div id="view-dashboard" class="app-view">
+        
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeMobileMenu()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span class="material-symbols-outlined">space_dashboard</span> Nexus UI
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-item active" onclick="switchPage('page-home', this)">
+                    <span class="material-symbols-outlined">analytics</span> 数据总览
+                </div>
+                <div class="menu-item" onclick="switchPage('page-settings', this)">
+                    <span class="material-symbols-outlined">settings</span> 系统设置
+                </div>
+                
+                <div class="menu-label">快捷管理</div>
+                <div class="menu-item" onclick="switchPage('page-home', this)">
+                    <span class="material-symbols-outlined">group</span> 用户管理
+                </div>
+                <div class="menu-item" onclick="switchPage('page-home', this)">
+                    <span class="material-symbols-outlined">inventory_2</span> 库存控制
+                </div>
+            </div>
+            <div style="padding: var(--spacing-sm); border-top: 1px solid var(--md-sys-color-surface-variant);">
+                <div class="menu-item" onclick="doLogout()" style="margin: 0;">
+                    <span class="material-symbols-outlined">logout</span> 退出登录
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-wrapper">
+            <header class="topbar">
+                <div style="display: flex; align-items: center; color: var(--md-sys-color-on-surface-variant);">
+                    <button class="menu-toggle-btn" onclick="toggleMobileMenu()">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="material-symbols-outlined">home</span> 
+                    <span id="breadcrumb" class="breadcrumb-text" style="margin-left: 8px;">/ 数据总览</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="md-btn-icon" onclick="toggleTheme()" title="切换主题" style="border:none; cursor:pointer;">
+                        <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+                    </button>
+                    <div style="display: flex; align-items: center; gap: 8px; background: var(--md-sys-color-surface); padding: 4px 12px 4px 4px; border-radius: 100px; cursor: pointer;">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--md-sys-color-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">A</div>
+                        <span style="font-weight: 500; font-size: 14px;">Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                
+                <div id="page-home" class="page-content active">
+                    <h2 class="header-title">数据概览</h2>
+                    
+                    <div class="grid-stats">
+                        <div class="md-card stat-card">
+                            <div class="title">本月营收 <div class="icon-box"><span class="material-symbols-outlined">payments</span></div></div>
+                            <div class="value">¥ 128,450</div>
+                            <div style="color: var(--md-sys-color-success); font-size: 14px; display: flex; align-items: center;"><span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span> +12.5%</div>
+                        </div>
+                        <div class="md-card stat-card">
+                            <div class="title">活跃用户 <div class="icon-box" style="background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-surface);"><span class="material-symbols-outlined">group</span></div></div>
+                            <div class="value">14,208</div>
+                            <div style="color: var(--md-sys-color-success); font-size: 14px; display: flex; align-items: center;"><span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span> +5.2%</div>
+                        </div>
+                        <div class="md-card stat-card">
+                            <div class="title">服务健康度 <div class="icon-box" style="background: rgba(76,175,80,0.2); color: #4CAF50;"><span class="material-symbols-outlined">dns</span></div></div>
+                            <div class="value">99.9%</div>
+                            <div style="color: var(--md-sys-color-on-surface-variant); font-size: 14px;">节点运行正常</div>
+                        </div>
+                    </div>
+
+                    <div class="grid-layout">
+                        <div class="md-card">
+                            <h3 style="margin-bottom: 16px; font-weight: 500;">趋势分析</h3>
+                            <div style="height: 300px;"><canvas id="mainChart"></canvas></div>
+                        </div>
+                        
+                        <div class="md-card">
+                            <h3 style="margin-bottom: 16px; font-weight: 500;">系统日志</h3>
+                            <div style="display: flex; flex-direction: column; gap: 16px;">
+                                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                    <div class="icon-box" style="width: 32px; height: 32px; border-radius: 50%;"><span class="material-symbols-outlined" style="font-size: 16px;">update</span></div>
+                                    <div>
+                                        <div style="font-size: 14px; font-weight: 500;">系统版本更新 v2.4.0</div>
+                                        <div style="font-size: 12px; color: var(--md-sys-color-on-surface-variant);">10分钟前</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                    <div class="icon-box" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,152,0,0.2); color: #FF9800;"><span class="material-symbols-outlined" style="font-size: 16px;">warning</span></div>
+                                    <div>
+                                        <div style="font-size: 14px; font-weight: 500;">数据库 CPU 负载报警</div>
+                                        <div style="font-size: 12px; color: var(--md-sys-color-on-surface-variant);">1小时前</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md-card" style="margin-bottom: 32px;">
+                        <h3 style="margin-bottom: 16px; font-weight: 500;">最新订单交易</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="min-width: 500px;">
+                                <thead>
+                                    <tr>
+                                        <th>订单号</th>
+                                        <th>客户</th>
+                                        <th>金额</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="font-weight: 500;">#ORD-001</td>
+                                        <td>张三</td>
+                                        <td style="font-weight: 700;">¥ 4,500.00</td>
+                                        <td><span class="md-chip success">已完成</span></td>
+                                        <td><button class="md-btn-icon" style="width: 32px; height: 32px; border:none;"><span class="material-symbols-outlined" style="font-size: 18px;">more_horiz</span></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">#ORD-002</td>
+                                        <td>李四科技</td>
+                                        <td style="font-weight: 700;">¥ 1,280.00</td>
+                                        <td><span class="md-chip warning">处理中</span></td>
+                                        <td><button class="md-btn-icon" style="width: 32px; height: 32px; border:none;"><span class="material-symbols-outlined" style="font-size: 18px;">more_horiz</span></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-settings" class="page-content">
+                    <h2 class="header-title">系统设置</h2>
+                    <div class="grid-layout">
+                        <div class="md-card">
+                            <h3 style="margin-bottom: 24px; font-weight: 500;">全局配置</h3>
+                            <div class="setting-item">
+                                <div>
+                                    <div style="font-weight: 500; margin-bottom: 4px;">维护模式</div>
+                                    <div style="font-size: 12px; color: var(--md-sys-color-on-surface-variant);">开启后普通用户将无法访问前端页面</div>
+                                </div>
+                                <label class="md-switch"><input type="checkbox"><span class="slider"></span></label>
+                            </div>
+                            <div class="setting-item">
+                                <div>
+                                    <div style="font-weight: 500; margin-bottom: 4px;">多设备登录验证</div>
+                                    <div style="font-size: 12px; color: var(--md-sys-color-on-surface-variant);">强制要求二次身份验证</div>
+                                </div>
+                                <label class="md-switch"><input type="checkbox" checked><span class="slider"></span></label>
+                            </div>
+                            <div style="margin-top: 32px;">
+                                <button class="md-btn md-btn-primary"><span class="material-symbols-outlined">save</span> 保存更改</button>
+                            </div>
+                        </div>
+
+                        <div class="md-card">
+                            <h3 style="margin-bottom: 24px; font-weight: 500;">系统存储监控</h3>
+                            <div style="margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 14px;">
+                                <span>主数据库 (75%)</span><span style="font-weight: 700;">750 GB / 1 TB</span>
+                            </div>
+                            <div style="height: 8px; background: var(--md-sys-color-surface-variant); border-radius: 4px; overflow: hidden; margin-bottom: 24px;">
+                                <div style="width: 75%; height: 100%; background: var(--md-sys-color-primary); border-radius: 4px;"></div>
+                            </div>
+                            <div style="margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 14px;">
+                                <span>附件缓存 (42%)</span><span style="font-weight: 700;">210 GB / 500 GB</span>
+                            </div>
+                            <div style="height: 8px; background: var(--md-sys-color-surface-variant); border-radius: 4px; overflow: hidden;">
+                                <div style="width: 42%; height: 100%; background: var(--md-sys-color-secondary); border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ==================== 登录逻辑 ====================
+        function doLogin() {
+            const btn = document.querySelector('.login-box button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">autorenew</span> 验证中...';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                document.getElementById('view-login').classList.remove('active');
+                document.getElementById('view-dashboard').classList.add('active');
+                setTimeout(initChart, 400); 
+            }, 800);
+        }
+
+        function doLogout() {
+            document.getElementById('view-dashboard').classList.remove('active');
+            document.getElementById('view-login').classList.add('active');
+            closeMobileMenu(); // 确保退出时侧边栏收起
+        }
+
+        // ==================== 移动端侧边栏逻辑 ====================
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('mobile-active');
+            overlay.classList.toggle('mobile-active');
+        }
+
+        function closeMobileMenu() {
+            sidebar.classList.remove('mobile-active');
+            overlay.classList.remove('mobile-active');
+        }
+
+        // ==================== 页面路由切换 ====================
+        function switchPage(pageId, element) {
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            const pageName = element.innerText.trim();
+            document.getElementById('breadcrumb').innerText = `/ ${pageName}`;
+
+            document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+            const targetPage = document.getElementById(pageId);
+            if(targetPage) {
+                void targetPage.offsetWidth; // 触发重绘重置动画
+                targetPage.classList.add('active');
+            }
+
+            // 核心：在移动端点击菜单项后自动关闭侧边栏
+            if (window.innerWidth <= 900) {
+                closeMobileMenu();
+            }
+        }
+
+        // ==================== 主题与图表 ====================
+        let isDark = false;
+        let myChart = null;
+
+        function toggleTheme() {
+            isDark = !isDark;
+            const root = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            
+            if (isDark) {
+                root.setAttribute('data-theme', 'dark');
+                icon.innerText = 'light_mode';
+            } else {
+                root.removeAttribute('data-theme');
+                icon.innerText = 'dark_mode';
+            }
+            updateChartTheme();
+        }
+
+        function getCSSVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+        function initChart() {
+            if(myChart) return;
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            Chart.defaults.font.family = "'Roboto', sans-serif";
+            
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                    datasets: [{
+                        label: '订单量', data: [65, 59, 80, 81, 56, 95, 110],
+                        backgroundColor: getCSSVar('--md-sys-color-primary'), borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: getCSSVar('--md-sys-color-surface-variant') }, ticks: { color: getCSSVar('--md-sys-color-on-surface-variant') }, border: {display: false} },
+                        x: { grid: { display: false }, ticks: { color: getCSSVar('--md-sys-color-on-surface-variant') }, border: {display: false} }
+                    }
+                }
+            });
+        }
+
+        function updateChartTheme() {
+            if(!myChart) return;
+            setTimeout(() => {
+                myChart.data.datasets[0].backgroundColor = getCSSVar('--md-sys-color-primary');
+                myChart.options.scales.y.grid.color = getCSSVar('--md-sys-color-surface-variant');
+                myChart.options.scales.x.ticks.color = getCSSVar('--md-sys-color-on-surface-variant');
+                myChart.options.scales.y.ticks.color = getCSSVar('--md-sys-color-on-surface-variant');
+                myChart.update();
+            }, 50);
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes spin { 100% { transform: rotate(360deg); } }`;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
