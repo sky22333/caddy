@@ -56,6 +56,11 @@ services:
       - ./web:/srv                           # 映射站点目录
     restart: always
 ```
+
+热重载
+```
+docker exec caddy caddy reload --config /etc/caddy/Caddyfile
+```
     
 </details>
 
@@ -88,6 +93,7 @@ sudo apt install -yq debian-keyring debian-archive-keyring apt-transport-https c
 | `sudo systemctl status caddy`                            | 查看 Caddy 运行状态           |
 | `sudo journalctl -u caddy`                              | 查看 Caddy 日志           |
 | `caddy validate --config /etc/caddy/Caddyfile`      | 检查 Caddy 配置文件           |
+| `caddy reload --config /etc/caddy/Caddyfile` | 热重载 Caddy 配置文件 |
 | `sudo systemctl stop caddy`                         | 停止 Caddy 服务               |
 | `sudo apt-get purge --auto-remove caddy`            | 完全卸载 Caddy                |
 | `/etc/caddy/Caddyfile`                              | Caddy 配置文件路径            |
