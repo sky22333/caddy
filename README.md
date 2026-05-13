@@ -57,7 +57,7 @@ services:
     restart: always
 ```
 
-热重载
+热重载配置文件
 ```
 docker exec caddy caddy reload --config /etc/caddy/Caddyfile
 ```
